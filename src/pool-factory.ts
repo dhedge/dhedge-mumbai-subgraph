@@ -24,6 +24,8 @@ import {
   ProxyCreated,
   Unpaused
 } from "../generated/schema"
+import { PoolLogic as PoolLogicTemplate } from '../generated/templates';
+
 
 export function handleDaoAddressSet(event: DaoAddressSetEvent): void {
   let entity = new DaoAddressSet(
@@ -72,6 +74,8 @@ export function handleFundCreated(event: FundCreatedEvent): void {
   entity.managerFeeNumerator = event.params.managerFeeNumerator
   entity.managerFeeDenominator = event.params.managerFeeDenominator
   entity.save()
+
+  PoolLogicTemplate.create(event.params.fundAddress);
 }
 
 export function handleLogUpgrade(event: LogUpgradeEvent): void {
