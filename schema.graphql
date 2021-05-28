@@ -63,3 +63,71 @@ type Unpaused @entity {
   id: ID!
   account: Bytes! # address
 }
+
+type Approval @entity {
+  id: ID!
+  owner: Bytes! # address
+  spender: Bytes! # address
+  value: BigInt! # uint256
+}
+
+type Deposit @entity {
+  id: ID!
+  fundAddress: Bytes! # address
+  investor: Bytes! # address
+  assetDeposited: Bytes! # address
+  valueDeposited: BigInt! # uint256
+  fundTokensReceived: BigInt! # uint256
+  totalInvestorFundTokens: BigInt! # uint256
+  fundValue: BigInt! # uint256
+  totalSupply: BigInt! # uint256
+  time: BigInt! # uint256
+}
+
+type ManagerFeeMinted @entity {
+  id: ID!
+  pool: Bytes! # address
+  manager: Bytes! # address
+  available: BigInt! # uint256
+  daoFee: BigInt! # uint256
+  managerFee: BigInt! # uint256
+  tokenPriceAtLastFeeMint: BigInt! # uint256
+}
+
+type PoolManagerLogicSet @entity {
+  id: ID!
+  poolManagerLogic: Bytes! # address
+  from: Bytes! # address
+}
+
+type PoolPrivacyUpdated @entity {
+  id: ID!
+  isPoolPrivate: Boolean! # bool
+}
+
+type TransactionExecuted @entity {
+  id: ID!
+  pool: Bytes! # address
+  manager: Bytes! # address
+  transactionType: Int! # uint8
+  time: BigInt! # uint256
+}
+
+type Transfer @entity {
+  id: ID!
+  from: Bytes! # address
+  to: Bytes! # address
+  value: BigInt! # uint256
+}
+
+type Withdrawal @entity {
+  id: ID!
+  fundAddress: Bytes! # address
+  investor: Bytes! # address
+  valueWithdrawn: BigInt! # uint256
+  fundTokensWithdrawn: BigInt! # uint256
+  totalInvestorFundTokens: BigInt! # uint256
+  fundValue: BigInt! # uint256
+  totalSupply: BigInt! # uint256
+  time: BigInt! # uint256
+}
