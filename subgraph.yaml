@@ -1,0 +1,54 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: PoolFactory
+    network: mainnet
+    source:
+      address: '0x91956c1098B047721686Bd831185ddB042b08684'
+      abi: PoolFactory
+      startBlock: 14066083
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - DaoAddressSet
+        - DaoFeeSet
+        - ExitCooldownSet
+        - ExitFeeSet
+        - FundCreated
+        - LogUpgrade
+        - MaximumSupportedAssetCountSet
+        - OwnershipTransferred
+        - Paused
+        - ProxyCreated
+        - Unpaused
+      abis:
+        - name: PoolFactory
+          file: ./abis/PoolFactory.json
+      eventHandlers:
+        - event: DaoAddressSet(address)
+          handler: handleDaoAddressSet
+        - event: DaoFeeSet(uint256,uint256)
+          handler: handleDaoFeeSet
+        - event: ExitCooldownSet(uint256)
+          handler: handleExitCooldownSet
+        - event: ExitFeeSet(uint256,uint256)
+          handler: handleExitFeeSet
+        - event: FundCreated(address,bool,string,string,address,uint256,uint256,uint256)
+          handler: handleFundCreated
+        - event: LogUpgrade(indexed address,indexed address)
+          handler: handleLogUpgrade
+        - event: MaximumSupportedAssetCountSet(uint256)
+          handler: handleMaximumSupportedAssetCountSet
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: Paused(address)
+          handler: handlePaused
+        - event: ProxyCreated(address)
+          handler: handleProxyCreated
+        - event: Unpaused(address)
+          handler: handleUnpaused
+      file: ./src/pool-factory.ts
