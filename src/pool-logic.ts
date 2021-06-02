@@ -40,6 +40,7 @@ export function handleDeposit(event: DepositEvent): void {
   entity.fundAddress = event.params.fundAddress;
   entity.totalSupply = contract.totalSupply();
   entity.investor = event.params.investor;
+  entity.assetDeposited = event.params.assetDeposited;
   entity.valueDeposited = event.params.valueDeposited;
   entity.fundTokensReceived = event.params.fundTokensReceived;
   entity.totalInvestorFundTokens = event.params.totalInvestorFundTokens;
