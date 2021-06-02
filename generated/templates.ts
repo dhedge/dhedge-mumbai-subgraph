@@ -19,3 +19,17 @@ export class PoolLogic extends DataSourceTemplate {
     );
   }
 }
+
+export class UniswapV2Guard extends DataSourceTemplate {
+  static create(address: Address): void {
+    DataSourceTemplate.create("UniswapV2Guard", [address.toHex()]);
+  }
+
+  static createWithContext(address: Address, context: DataSourceContext): void {
+    DataSourceTemplate.createWithContext(
+      "UniswapV2Guard",
+      [address.toHex()],
+      context
+    );
+  }
+}

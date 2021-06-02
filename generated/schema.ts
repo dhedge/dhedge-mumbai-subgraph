@@ -1131,3 +1131,79 @@ export class Withdrawal extends Entity {
     this.set("time", Value.fromBigInt(value));
   }
 }
+
+export class Exchange extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Exchange entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Exchange entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Exchange", id.toString(), this);
+  }
+
+  static load(id: string): Exchange | null {
+    return store.get("Exchange", id) as Exchange | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get fundAddress(): Bytes {
+    let value = this.get("fundAddress");
+    return value.toBytes();
+  }
+
+  set fundAddress(value: Bytes) {
+    this.set("fundAddress", Value.fromBytes(value));
+  }
+
+  get sourceAsset(): Bytes {
+    let value = this.get("sourceAsset");
+    return value.toBytes();
+  }
+
+  set sourceAsset(value: Bytes) {
+    this.set("sourceAsset", Value.fromBytes(value));
+  }
+
+  get sourceAmount(): BigInt {
+    let value = this.get("sourceAmount");
+    return value.toBigInt();
+  }
+
+  set sourceAmount(value: BigInt) {
+    this.set("sourceAmount", Value.fromBigInt(value));
+  }
+
+  get destinationAddress(): Bytes {
+    let value = this.get("destinationAddress");
+    return value.toBytes();
+  }
+
+  set destinationAddress(value: Bytes) {
+    this.set("destinationAddress", Value.fromBytes(value));
+  }
+
+  get time(): BigInt {
+    let value = this.get("time");
+    return value.toBigInt();
+  }
+
+  set time(value: BigInt) {
+    this.set("time", Value.fromBigInt(value));
+  }
+}

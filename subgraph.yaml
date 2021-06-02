@@ -92,3 +92,22 @@ templates:
         - event: Withdrawal(address,address,uint256,uint256,uint256,uint256,uint256,uint256)
           handler: handleWithdrawal
       file: ./src/pool-logic.ts
+
+  - kind: ethereum/contract
+    name: UniswapV2Guard
+    network: mumbai
+    source:
+      abi: UniswapV2Guard
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Exchange
+      abis:
+        - name: UniswapV2Guard
+          file: ./abis/UniswapV2Guard.json
+      eventHandlers:
+        - event: Exchange(address,address,uint256,address,uint256)
+          handler: handleExchange
+      file: ./src/uniswap-v2-guard.ts
