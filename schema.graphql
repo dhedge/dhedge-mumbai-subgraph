@@ -131,3 +131,21 @@ type Withdrawal @entity {
   totalSupply: BigInt! # uint256
   time: BigInt! # uint256
 }
+
+type Approve @entity {
+  id: ID!
+  fundAddress: Bytes! # address
+  manager: Bytes! # address
+  spender: Bytes! # address
+  amount: BigInt! # uint256
+  time: BigInt! # uint256
+}
+
+type Exchange @entity {
+  id: ID!
+  fundAddress: Bytes! # address
+  sourceAsset: Bytes! # address
+  sourceAmount: BigInt! # uint256
+  destinationAddress: Bytes! # address
+  time: BigInt! # uint256
+}

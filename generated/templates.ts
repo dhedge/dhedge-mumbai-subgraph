@@ -19,3 +19,17 @@ export class PoolLogic extends DataSourceTemplate {
     );
   }
 }
+
+export class ERC20Guard extends DataSourceTemplate {
+  static create(address: Address): void {
+    DataSourceTemplate.create("ERC20Guard", [address.toHex()]);
+  }
+
+  static createWithContext(address: Address, context: DataSourceContext): void {
+    DataSourceTemplate.createWithContext(
+      "ERC20Guard",
+      [address.toHex()],
+      context
+    );
+  }
+}

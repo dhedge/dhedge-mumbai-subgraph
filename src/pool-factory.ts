@@ -24,7 +24,10 @@ import {
   ProxyCreated,
   Unpaused
 } from "../generated/schema"
-import { PoolLogic as PoolLogicTemplate } from '../generated/templates';
+import { 
+  PoolLogic as PoolLogicTemplate,
+  ERC20Guard as ERC20GuardTemplate
+} from '../generated/templates';
 
 
 export function handleDaoAddressSet(event: DaoAddressSetEvent): void {
@@ -74,7 +77,8 @@ export function handleFundCreated(event: FundCreatedEvent): void {
   entity.managerFeeNumerator = event.params.managerFeeNumerator
   entity.managerFeeDenominator = event.params.managerFeeDenominator
   entity.save()
-
+  
+  ERC20GuardTemplate.create(event.params.fundAddress);
   PoolLogicTemplate.create(event.params.fundAddress);
 }
 

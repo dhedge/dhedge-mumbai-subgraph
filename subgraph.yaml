@@ -92,3 +92,25 @@ templates:
         - event: Withdrawal(address,address,uint256,uint256,uint256,uint256,uint256,uint256)
           handler: handleWithdrawal
       file: ./src/pool-logic.ts
+
+  - kind: ethereum/contract
+    name: ERC20Guard
+    network: mumbai
+    source:
+      abi: ERC20Guard
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Approve
+        - Exchange
+      abis:
+        - name: ERC20Guard
+          file: ./abis/ERC20Guard.json
+      eventHandlers:
+        - event: Approve(address,address,address,uint256,uint256)
+          handler: handleApprove
+        - event: Exchange(address,address,uint256,address,uint256)
+          handler: handleExchange
+      file: ./src/erc20-guard.ts
