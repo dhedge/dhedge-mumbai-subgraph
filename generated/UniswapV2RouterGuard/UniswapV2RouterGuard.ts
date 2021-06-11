@@ -69,7 +69,7 @@ export class Exchange__Params {
     return this._event.parameters[2].value.toBigInt();
   }
 
-  get destinationAddress(): Address {
+  get dstAsset(): Address {
     return this._event.parameters[3].value.toAddress();
   }
 

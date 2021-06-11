@@ -137,6 +137,6 @@ type Exchange @entity {
   fundAddress: Bytes! # address
   sourceAsset: Bytes! # address
   sourceAmount: BigInt! # uint256
-  destinationAddress: Bytes! # address
+  dstAsset: Bytes! # address
   time: BigInt! # uint256
 }

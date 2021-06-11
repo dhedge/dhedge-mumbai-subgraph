@@ -1189,13 +1189,13 @@ export class Exchange extends Entity {
     this.set("sourceAmount", Value.fromBigInt(value));
   }
 
-  get destinationAddress(): Bytes {
-    let value = this.get("destinationAddress");
+  get dstAsset(): Bytes {
+    let value = this.get("dstAsset");
     return value.toBytes();
   }
 
-  set destinationAddress(value: Bytes) {
-    this.set("destinationAddress", Value.fromBytes(value));
+  set dstAsset(value: Bytes) {
+    this.set("dstAsset", Value.fromBytes(value));
   }
 
   get time(): BigInt {

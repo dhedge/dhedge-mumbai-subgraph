@@ -13,7 +13,7 @@ export function handleExchange(event: ExchangeEvent): void {
   entity.fundAddress = event.params.fundAddress;
   entity.sourceAsset = event.params.sourceAsset;
   entity.sourceAmount = event.params.sourceAmount;
-  entity.destinationAddress = event.params.destinationAddress;
+  entity.dstAsset = event.params.dstAsset;
   entity.time = event.params.time;
   entity.save();
 }
