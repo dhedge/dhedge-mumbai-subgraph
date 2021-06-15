@@ -82,6 +82,7 @@ type Deposit @entity {
   fundValue: BigInt! # uint256
   totalSupply: BigInt! # uint256
   time: BigInt! # uint256
+  pool: Pool!
 }
 
 type ManagerFeeMinted @entity {
@@ -130,6 +131,28 @@ type Withdrawal @entity {
   fundValue: BigInt! # uint256
   totalSupply: BigInt! # uint256
   time: BigInt! # uint256
+  pool: Pool!
+}
+
+type Exchange @entity {
+  id: ID!
+  fundAddress: Bytes! # address
+  sourceAsset: Bytes! # address
+  sourceAmount: BigInt! # uint256
+  dstAsset: Bytes! # address
+  time: BigInt! # uint256
+  pool: Pool!
+}
+
+type Pool @entity {
+  id: ID!
+  fundAddress: Bytes! # address
+  name: String! # string
+  managerName: String! # string`
+  totalSupply: BigInt! # uint256
+  deposits: [Deposit!]! @derivedFrom(field: "pool")
+  withdrawals: [Withdrawal!]! @derivedFrom(field: "pool")
+  exchanges: [Exchange!]! @derivedFrom(field: "pool")
 }
 
 type Exchange @entity {

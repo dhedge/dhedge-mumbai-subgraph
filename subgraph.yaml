@@ -65,9 +65,12 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Exchange
+        - Pool
       abis:
         - name: UniswapV2RouterGuard
           file: ./abis/UniswapV2RouterGuard.json
+        - name: PoolLogic
+          file: ./abis/PoolLogic.json
       eventHandlers:
         - event: Exchange(address,address,uint256,address,uint256)
           handler: handleExchange
@@ -92,6 +95,7 @@ templates:
         - TransactionExecuted
         - Transfer
         - Withdrawal
+        - Pool
       abis:
         - name: PoolLogic
           file: ./abis/PoolLogic.json

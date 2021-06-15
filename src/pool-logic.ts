@@ -18,6 +18,7 @@ import {
   TransactionExecuted,
   Transfer,
   Withdrawal,
+  Pool
 } from '../generated/schema';
 import { dataSource, log } from '@graphprotocol/graph-ts';
 
@@ -37,6 +38,18 @@ export function handleDeposit(event: DepositEvent): void {
   );
   let contract = PoolLogic.bind(event.address);  
 
+  let id = dataSource.address().toHexString();
+  let pool = Pool.load(id);
+  if (!pool) {
+    pool = new Pool(id);
+    pool.fundAddress = event.params.fundAddress;
+  }
+  pool.name = contract.name();
+  pool.managerName = contract.managerName();
+  pool.totalSupply = contract.totalSupply();
+  pool.save();
+
+  entity.pool = pool.id;
   entity.fundAddress = event.params.fundAddress;
   entity.totalSupply = contract.totalSupply();
   entity.investor = event.params.investor;
@@ -110,6 +123,18 @@ export function handleWithdrawal(event: WithdrawalEvent): void {
   );
   let contract = PoolLogic.bind(event.address);
 
+  let id = dataSource.address().toHexString();
+  let pool = Pool.load(id);
+  if (!pool) {
+    pool = new Pool(id);
+    pool.fundAddress = event.params.fundAddress;
+  }
+  pool.name = contract.name();
+  pool.managerName = contract.managerName();
+  pool.totalSupply = contract.totalSupply();
+  pool.save();
+
+  entity.pool = pool.id;
   entity.fundAddress = event.params.fundAddress;
   entity.totalSupply = contract.totalSupply();
   entity.investor = event.params.investor;
