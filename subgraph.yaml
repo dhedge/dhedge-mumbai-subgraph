@@ -52,6 +52,30 @@ dataSources:
         - event: Unpaused(address)
           handler: handleUnpaused
       file: ./src/pool-factory.ts
+  - kind: ethereum/contract
+    name: UniswapV2RouterGuard
+    network: mumbai
+    source:
+      address: '0xc396Eb2318310553F6cf5Ae6FD644d82e9ff8be8'
+      abi: UniswapV2RouterGuard
+      startBlock: 14370226
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Exchange
+        - Pool
+      abis:
+        - name: UniswapV2RouterGuard
+          file: ./abis/UniswapV2RouterGuard.json
+        - name: PoolLogic
+          file: ./abis/PoolLogic.json
+      eventHandlers:
+        - event: Exchange(address,address,uint256,address,uint256)
+          handler: handleExchange
+      file: ./src/uniswap-v2-router-guard.ts
+
 templates:
   - kind: ethereum/contract
     name: PoolLogic
@@ -71,6 +95,7 @@ templates:
         - TransactionExecuted
         - Transfer
         - Withdrawal
+        - Pool
       abis:
         - name: PoolLogic
           file: ./abis/PoolLogic.json
