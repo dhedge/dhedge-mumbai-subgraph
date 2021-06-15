@@ -1329,7 +1329,7 @@ export class Pool extends Entity {
   }
 }
 
-export class Exchange extends Entity {
+export class Asset extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -1337,17 +1337,17 @@ export class Exchange extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save Exchange entity without an ID");
+    assert(id !== null, "Cannot save Asset entity without an ID");
     assert(
       id.kind == ValueKind.STRING,
-      "Cannot save Exchange entity with non-string ID. " +
+      "Cannot save Asset entity with non-string ID. " +
         'Considering using .toHex() to convert the "id" to a string.'
     );
-    store.set("Exchange", id.toString(), this);
+    store.set("Asset", id.toString(), this);
   }
 
-  static load(id: string): Exchange | null {
-    return store.get("Exchange", id) as Exchange | null;
+  static load(id: string): Asset | null {
+    return store.get("Asset", id) as Asset | null;
   }
 
   get id(): string {
@@ -1359,48 +1359,21 @@ export class Exchange extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get fundAddress(): Bytes {
-    let value = this.get("fundAddress");
-    return value.toBytes();
+  get name(): string {
+    let value = this.get("name");
+    return value.toString();
   }
 
-  set fundAddress(value: Bytes) {
-    this.set("fundAddress", Value.fromBytes(value));
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
   }
 
-  get sourceAsset(): Bytes {
-    let value = this.get("sourceAsset");
-    return value.toBytes();
+  get symbol(): string {
+    let value = this.get("symbol");
+    return value.toString();
   }
 
-  set sourceAsset(value: Bytes) {
-    this.set("sourceAsset", Value.fromBytes(value));
-  }
-
-  get sourceAmount(): BigInt {
-    let value = this.get("sourceAmount");
-    return value.toBigInt();
-  }
-
-  set sourceAmount(value: BigInt) {
-    this.set("sourceAmount", Value.fromBigInt(value));
-  }
-
-  get dstAsset(): Bytes {
-    let value = this.get("dstAsset");
-    return value.toBytes();
-  }
-
-  set dstAsset(value: Bytes) {
-    this.set("dstAsset", Value.fromBytes(value));
-  }
-
-  get time(): BigInt {
-    let value = this.get("time");
-    return value.toBigInt();
-  }
-
-  set time(value: BigInt) {
-    this.set("time", Value.fromBigInt(value));
+  set symbol(value: string) {
+    this.set("symbol", Value.fromString(value));
   }
 }
