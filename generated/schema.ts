@@ -1233,6 +1233,15 @@ export class Exchange extends Entity {
   set pool(value: string) {
     this.set("pool", Value.fromString(value));
   }
+
+  get dstAmount(): BigDecimal {
+    let value = this.get("dstAmount");
+    return value.toBigDecimal();
+  }
+
+  set dstAmount(value: BigDecimal) {
+    this.set("dstAmount", Value.fromBigDecimal(value));
+  }
 }
 
 export class Pool extends Entity {
@@ -1327,9 +1336,18 @@ export class Pool extends Entity {
   set exchanges(value: Array<string>) {
     this.set("exchanges", Value.fromStringArray(value));
   }
+
+  get ExchangeCompletes(): Array<string> {
+    let value = this.get("ExchangeCompletes");
+    return value.toStringArray();
+  }
+
+  set ExchangeCompletes(value: Array<string>) {
+    this.set("ExchangeCompletes", Value.fromStringArray(value));
+  }
 }
 
-export class Asset extends Entity {
+export class Token extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -1337,17 +1355,17 @@ export class Asset extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save Asset entity without an ID");
+    assert(id !== null, "Cannot save Token entity without an ID");
     assert(
       id.kind == ValueKind.STRING,
-      "Cannot save Asset entity with non-string ID. " +
+      "Cannot save Token entity with non-string ID. " +
         'Considering using .toHex() to convert the "id" to a string.'
     );
-    store.set("Asset", id.toString(), this);
+    store.set("Token", id.toString(), this);
   }
 
-  static load(id: string): Asset | null {
-    return store.get("Asset", id) as Asset | null;
+  static load(id: string): Token | null {
+    return store.get("Token", id) as Token | null;
   }
 
   get id(): string {
@@ -1375,5 +1393,72 @@ export class Asset extends Entity {
 
   set symbol(value: string) {
     this.set("symbol", Value.fromString(value));
+  }
+
+  get balanceOf(): BigDecimal {
+    let value = this.get("balanceOf");
+    return value.toBigDecimal();
+  }
+
+  set balanceOf(value: BigDecimal) {
+    this.set("balanceOf", Value.fromBigDecimal(value));
+  }
+}
+
+export class ExchangeComplete extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save ExchangeComplete entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save ExchangeComplete entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("ExchangeComplete", id.toString(), this);
+  }
+
+  static load(id: string): ExchangeComplete | null {
+    return store.get("ExchangeComplete", id) as ExchangeComplete | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get pool(): string {
+    let value = this.get("pool");
+    return value.toString();
+  }
+
+  set pool(value: string) {
+    this.set("pool", Value.fromString(value));
+  }
+
+  get asset(): string {
+    let value = this.get("asset");
+    return value.toString();
+  }
+
+  set asset(value: string) {
+    this.set("asset", Value.fromString(value));
+  }
+
+  get balance(): BigDecimal {
+    let value = this.get("balance");
+    return value.toBigDecimal();
+  }
+
+  set balance(value: BigDecimal) {
+    this.set("balance", Value.fromBigDecimal(value));
   }
 }

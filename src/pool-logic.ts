@@ -20,6 +20,7 @@ import {
   Withdrawal,
   Pool
 } from '../generated/schema';
+import { createToken } from "./helpers";
 import { dataSource, log } from '@graphprotocol/graph-ts';
 
 export function handleApproval(event: ApprovalEvent): void {
@@ -36,7 +37,7 @@ export function handleDeposit(event: DepositEvent): void {
   let entity = new Deposit(
     event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   );
-  let contract = PoolLogic.bind(event.address);  
+  let contract = PoolLogic.bind(event.address);
 
   let id = dataSource.address().toHexString();
   let pool = Pool.load(id);

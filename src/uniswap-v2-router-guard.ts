@@ -4,43 +4,86 @@ import {
 import {
   Exchange as ExchangeEvent,
 } from '../generated/UniswapV2RouterGuard/UniswapV2RouterGuard';
+import { ERC20 } from "../generated/UniswapV2RouterGuard/ERC20";
 import {
   Exchange,
-  Pool
+  Pool,
+  Token,
+  ExchangeComplete
 } from '../generated/schema';
-import { dataSource, log } from '@graphprotocol/graph-ts';
+import { 
+  createToken,
+  BI_18,
+  convertTokenToDecimal
+} from "./helpers";
+import { dataSource, log, BigDecimal, BigInt, Address } from '@graphprotocol/graph-ts';
 
 export function handleExchange(event: ExchangeEvent): void {
   let entity = new Exchange(
     event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   );
 
-  // log.info(
-  //   'exchange entity in tx hash: {} at blockNumber: {}', 
-  //   [event.transaction.hash.toHex(), event.block.number.toString()]
-  // );
-
-  // let contract = PoolLogic.bind(event.address);
   let contract = PoolLogic.bind(event.params.fundAddress);
-
-  // dataSource.address() will give you the address of the contract that datasource is listening to.
-  // try with: event.params.fundAddress
-  // let id = dataSource.address().toHexString();
-  // log.info(
-  //   'exchange entity logging dataSource.address from dataSource: {}',
-  //   [id]
-  // );
-
-  // let pool = Pool.load(id);
   let pool = Pool.load(event.params.fundAddress.toHexString());
+  
 
-  // log.info(
-  //   'logging pool entity id: {}',
-  //   [pool.id]
-  // )
+  // SAVE TOKEN (MOVE TO HELPERS)
+  let destinationTokenAddress = event.params.dstAsset.toHexString();
+
+  let token = Token.load(destinationTokenAddress);
+
+  if (token === null) {
+    token = new Token(destinationTokenAddress);
+    let erc20Contract = ERC20.bind(event.params.dstAsset);
+    let tokenContractBalance = Address.fromString(event.params.fundAddress.toHexString());
+
+    token.name = erc20Contract.name();
+    token.symbol = erc20Contract.symbol();
+    token.balanceOf = convertTokenToDecimal(erc20Contract.balanceOf(tokenContractBalance), BI_18);
+    token.save();
+  }
+
+
+  // HANDLE EXCHANGE COMPLETE
+  let exchangeComplete = ExchangeComplete.load(event.params.fundAddress.toHexString());
+  if (exchangeComplete === null) {
+    exchangeComplete = new ExchangeComplete(event.transaction.hash.toHex() + "-" + event.params.dstAsset.toHexString());
+  } else {
+    // we need the difference of the balance from last snapshot
+    // do the calculation of the difference in here
+
+    // GET CURRENT BALANCE
+    // load the balance of fundAddress: event.params.fundAddress.toHexString()
+    let testDstAsset = ERC20.bind(event.params.dstAsset);
+    let testContractBalance = Address.fromString(event.params.fundAddress.toHexString());
+
+    let newBalanceDecimal = convertTokenToDecimal(testDstAsset.balanceOf(testContractBalance), BI_18);
+    let oldBalanceDecimal = exchangeComplete.balance;
+    // newBalanceDecimal - oldBalanceDecimal 
+
+    entity.dstAmount = token.balanceOf;
+    // let result = newBalanceDecimal - oldBalanceDecimal;
+
+    // exchangeComplete.balance = result // should fetch the difference in balance
+    exchangeComplete.balance = newBalanceDecimal // should fetch the difference in balance
+  }
+
+  let testDstAsset = ERC20.bind(event.params.dstAsset);
+  let testContractBalance = Address.fromString(event.params.fundAddress.toHexString());
+
+  let newBalanceDecimal = convertTokenToDecimal(testDstAsset.balanceOf(testContractBalance), BI_18);
+
+  entity.dstAmount = token.balanceOf;
+
+  exchangeComplete.pool = pool.id;
+  exchangeComplete.asset = token.id;
+  // exchangeComplete.balance = token.balanceOf; // update this with difference
+  exchangeComplete.balance = newBalanceDecimal; // update this with difference
+  exchangeComplete.save();
+  // END EXCHANGE COMPLETE
+
 
   if (!pool) {
-    // pool = new Pool(id);
     pool = new Pool(event.params.fundAddress.toHexString());
     pool.fundAddress = event.params.fundAddress;
   }
@@ -52,7 +95,8 @@ export function handleExchange(event: ExchangeEvent): void {
       [event.transaction.hash.toHex(), event.block.number.toString()]
     );
     return;
-  }
+  };
+
 
   let poolName = tryPoolName.value;
   pool.name = poolName;

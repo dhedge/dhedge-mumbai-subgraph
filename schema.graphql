@@ -142,6 +142,7 @@ type Exchange @entity {
   dstAsset: Bytes! # address
   time: BigInt! # uint256
   pool: Pool!
+  dstAmount: BigDecimal!
 }
 
 type Pool @entity {
@@ -153,11 +154,25 @@ type Pool @entity {
   deposits: [Deposit!]! @derivedFrom(field: "pool")
   withdrawals: [Withdrawal!]! @derivedFrom(field: "pool")
   exchanges: [Exchange!]! @derivedFrom(field: "pool")
+  ExchangeCompletes: [ExchangeComplete!]! @derivedFrom(field: "pool")
 }
 
 # 1 asset can belong to many Pools
-type Asset @entity {
+type Token @entity {
   id: ID! # sourceAsset (address)
   name: String!
   symbol: String!
+  balanceOf: BigDecimal!
 }
+
+type ExchangeComplete @entity {
+  id: ID!
+  pool: Pool!
+  asset: Token!
+  balance: BigDecimal!
+}
+
+# type TokenBalance @entity {
+#   id: ID! # fundAddress
+#   token: Token
+# }
