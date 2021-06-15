@@ -154,3 +154,12 @@ type Pool @entity {
   withdrawals: [Withdrawal!]! @derivedFrom(field: "pool")
   exchanges: [Exchange!]! @derivedFrom(field: "pool")
 }
+
+type Exchange @entity {
+  id: ID!
+  fundAddress: Bytes! # address
+  sourceAsset: Bytes! # address
+  sourceAmount: BigInt! # uint256
+  dstAsset: Bytes! # address
+  time: BigInt! # uint256
+}
