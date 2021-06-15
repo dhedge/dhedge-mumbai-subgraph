@@ -1206,4 +1206,120 @@ export class Exchange extends Entity {
   set time(value: BigInt) {
     this.set("time", Value.fromBigInt(value));
   }
+
+  get dstAmount(): BigInt {
+    let value = this.get("dstAmount");
+    return value.toBigInt();
+  }
+
+  set dstAmount(value: BigInt) {
+    this.set("dstAmount", Value.fromBigInt(value));
+  }
+}
+
+export class ExchangeComplete extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save ExchangeComplete entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save ExchangeComplete entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("ExchangeComplete", id.toString(), this);
+  }
+
+  static load(id: string): ExchangeComplete | null {
+    return store.get("ExchangeComplete", id) as ExchangeComplete | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get fund(): string {
+    let value = this.get("fund");
+    return value.toString();
+  }
+
+  set fund(value: string) {
+    this.set("fund", Value.fromString(value));
+  }
+
+  get asset(): string {
+    let value = this.get("asset");
+    return value.toString();
+  }
+
+  set asset(value: string) {
+    this.set("asset", Value.fromString(value));
+  }
+
+  get balance(): BigInt {
+    let value = this.get("balance");
+    return value.toBigInt();
+  }
+
+  set balance(value: BigInt) {
+    this.set("balance", Value.fromBigInt(value));
+  }
+}
+
+export class Asset extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Asset entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Asset entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Asset", id.toString(), this);
+  }
+
+  static load(id: string): Asset | null {
+    return store.get("Asset", id) as Asset | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get name(): string {
+    let value = this.get("name");
+    return value.toString();
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
+
+  get symbol(): string {
+    let value = this.get("symbol");
+    return value.toString();
+  }
+
+  set symbol(value: string) {
+    this.set("symbol", Value.fromString(value));
+  }
 }

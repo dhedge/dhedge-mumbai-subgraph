@@ -139,4 +139,19 @@ type Exchange @entity {
   sourceAmount: BigInt! # uint256
   dstAsset: Bytes! # address
   time: BigInt! # uint256
+  dstAmount: BigInt! # uint256
+}
+
+type ExchangeComplete @entity {
+  id: ID!
+  fund: FundCreated!
+  asset: Asset!
+  balance: BigInt! # uint256
+}
+
+# 1 asset can belong to many Funds
+type Asset @entity {
+  id: ID! # sourceAsset (address)
+  name: String!
+  symbol: String!
 }
