@@ -38,7 +38,7 @@ export function handleExchange(event: ExchangeEvent): void {
   // HANDLE EXCHANGE COMPLETE
   let poolBalanceSnapshot = PoolBalanceSnapshot.load(event.params.fundAddress.toHexString());
   if (poolBalanceSnapshot === null) {
-    poolBalanceSnapshot = new PoolBalanceSnapshot(event.transaction.hash.toHex() + "-" + event.params.dstAsset.toHexString());
+    poolBalanceSnapshot = new PoolBalanceSnapshot(event.params.fundAddress.toHexString());
   } else {
     // we need the difference of the balance from last snapshot
     // do the calculation of the difference in here
