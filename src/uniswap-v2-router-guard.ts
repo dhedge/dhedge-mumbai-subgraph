@@ -14,7 +14,8 @@ import {
 import { 
   createToken,
   BI_18,
-  convertTokenToDecimal
+  convertTokenToDecimal,
+  fetchTokenDecimals
 } from "./helpers";
 import { dataSource, log, BigDecimal, BigInt, Address } from '@graphprotocol/graph-ts';
 
@@ -23,65 +24,51 @@ export function handleExchange(event: ExchangeEvent): void {
     event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   );
 
-  let contract = PoolLogic.bind(event.params.fundAddress);
-  let fundAddress = event.params.fundAddress.toHexString();
-  let pool = Pool.load(fundAddress);
-  // let destinationTokenAddress = event.params.dstAsset.toHexString();
-
-  // pass destinationTokenAddress to createToken()
+  let poolLogicContract = PoolLogic.bind(event.params.fundAddress);
+  let pool = Pool.load(event.params.fundAddress.toHexString());
+  let poolBalanceSnapshot = PoolBalanceSnapshot.load(event.params.fundAddress.toHexString());
+ 
+  // create the tokens
   let token = createToken(event.params.dstAsset, event.params.fundAddress);
   // if token is not null, return token and update its balanceOf
   // we want to be updating token.balanceOf as the latest most up to date snapshot
+  let decimals = fetchTokenDecimals(event.params.dstAsset);
   
 
-
-  // HANDLE EXCHANGE COMPLETE
-  let poolBalanceSnapshot = PoolBalanceSnapshot.load(event.params.fundAddress.toHexString());
   if (poolBalanceSnapshot === null) {
     poolBalanceSnapshot = new PoolBalanceSnapshot(event.params.fundAddress.toHexString());
-  } else {
-    // we need the difference of the balance from last snapshot
-    // do the calculation of the difference in here
+  } 
+  // we need the difference of the balance from last snapshot
+  // do the calculation of the difference in here
 
-    // GET CURRENT BALANCE
-    // load the balance of fundAddress: event.params.fundAddress.toHexString()
-    let testDstAsset = ERC20.bind(event.params.dstAsset);
-    let testContractBalance = Address.fromString(event.params.fundAddress.toHexString());
-
-    let newBalanceDecimal = convertTokenToDecimal(testDstAsset.balanceOf(testContractBalance), BI_18);
-    let oldBalanceDecimal = poolBalanceSnapshot.balance;
-    // newBalanceDecimal - oldBalanceDecimal 
-
-    entity.dstAmount = token.balanceOf;
-    // let result = newBalanceDecimal - oldBalanceDecimal;
-
-    // exchangeComplete.balance = result // should fetch the difference in balance
-    poolBalanceSnapshot.balance = newBalanceDecimal // should fetch the difference in balance
-  }
-
-  let testDstAsset = ERC20.bind(event.params.dstAsset);
+  let erc20Contract = ERC20.bind(event.params.dstAsset);
   let testContractBalance = Address.fromString(event.params.fundAddress.toHexString());
+  // let newBalanceDecimal = convertTokenToDecimal(testDstAsset.balanceOf(testContractBalance), BI_18);
+  let currentFormattedBalance = convertTokenToDecimal(erc20Contract.balanceOf(testContractBalance), decimals);
+  
+  // we're saving the token.amount to exchange.amount
+  // wait which one do i save - its the same thing
+  // entity.dstAmount = token.amount; // (unsure what this is) this didnt work
+  entity.dstAmount = currentFormattedBalance; // this just sets current balance
 
-  let newBalanceDecimal = convertTokenToDecimal(testDstAsset.balanceOf(testContractBalance), BI_18);
+  // Currently testing:
+  poolBalanceSnapshot.testValue = currentFormattedBalance // should fetch the difference in balance
+  poolBalanceSnapshot.currentBalance = token.amount // should fetch the difference in balance
 
-  // wrong
-  // entity.dstAmount = token.balanceOf;
-
-  entity.dstAmount = newBalanceDecimal;
 
   poolBalanceSnapshot.pool = pool.id;
   poolBalanceSnapshot.asset = token.id;
-  // exchangeComplete.balance = token.balanceOf; // update this with difference
-  poolBalanceSnapshot.balance = newBalanceDecimal; // update this with difference
+  poolBalanceSnapshot.token = token.id;
+  // poolBalanceSnapshot.currentBalance = currentFormattedBalance; // update this with difference
+  poolBalanceSnapshot.currentBalance = token.amount; // update this with difference
   poolBalanceSnapshot.save();
   // END EXCHANGE COMPLETE
-
-
+  
   if (!pool) {
     pool = new Pool(event.params.fundAddress.toHexString());
     pool.fundAddress = event.params.fundAddress;
   }
-  let tryPoolName = contract.try_name()
+  let tryPoolName = poolLogicContract.try_name()
 
   if (tryPoolName.reverted) {
     log.info(
@@ -95,8 +82,8 @@ export function handleExchange(event: ExchangeEvent): void {
   let poolName = tryPoolName.value;
   pool.name = poolName;
 
-  pool.managerName = contract.managerName();
-  pool.totalSupply = contract.totalSupply();
+  pool.managerName = poolLogicContract.managerName();
+  pool.totalSupply = poolLogicContract.totalSupply();
   // will maybe need to add pool.balanceSnapshot
   pool.save();
 

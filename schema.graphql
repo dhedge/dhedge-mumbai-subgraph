@@ -149,6 +149,7 @@ type Pool @entity {
   id: ID!
   fundAddress: Bytes! # address
   name: String! # string
+  # manager: ADD MANAGER
   managerName: String! # string`
   totalSupply: BigInt! # uint256
   deposits: [Deposit!]! @derivedFrom(field: "pool")
@@ -162,17 +163,17 @@ type Token @entity {
   id: ID! # sourceAsset (address)
   name: String!
   symbol: String!
-  balanceOf: BigDecimal!
+  decimals: BigInt!
+  amount: BigDecimal!
+  poolBalanceSnapshots: [PoolBalanceSnapshot!]! @derivedFrom(field: "token")
 }
 
+# when queried, should returns an Array of tokens (assets)
 type PoolBalanceSnapshot @entity {
   id: ID!
   pool: Pool!
   asset: Token!
-  balance: BigDecimal!
+  currentBalance: BigDecimal!
+  token: Token!
+  testValue: BigDecimal! # maybe this needs to be in Token
 }
-
-# type TokenBalance @entity {
-#   id: ID! # fundAddress
-#   token: Token
-# }

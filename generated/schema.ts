@@ -1395,13 +1395,31 @@ export class Token extends Entity {
     this.set("symbol", Value.fromString(value));
   }
 
-  get balanceOf(): BigDecimal {
-    let value = this.get("balanceOf");
+  get decimals(): BigInt {
+    let value = this.get("decimals");
+    return value.toBigInt();
+  }
+
+  set decimals(value: BigInt) {
+    this.set("decimals", Value.fromBigInt(value));
+  }
+
+  get amount(): BigDecimal {
+    let value = this.get("amount");
     return value.toBigDecimal();
   }
 
-  set balanceOf(value: BigDecimal) {
-    this.set("balanceOf", Value.fromBigDecimal(value));
+  set amount(value: BigDecimal) {
+    this.set("amount", Value.fromBigDecimal(value));
+  }
+
+  get poolBalanceSnapshots(): Array<string> {
+    let value = this.get("poolBalanceSnapshots");
+    return value.toStringArray();
+  }
+
+  set poolBalanceSnapshots(value: Array<string>) {
+    this.set("poolBalanceSnapshots", Value.fromStringArray(value));
   }
 }
 
@@ -1453,12 +1471,30 @@ export class PoolBalanceSnapshot extends Entity {
     this.set("asset", Value.fromString(value));
   }
 
-  get balance(): BigDecimal {
-    let value = this.get("balance");
+  get currentBalance(): BigDecimal {
+    let value = this.get("currentBalance");
     return value.toBigDecimal();
   }
 
-  set balance(value: BigDecimal) {
-    this.set("balance", Value.fromBigDecimal(value));
+  set currentBalance(value: BigDecimal) {
+    this.set("currentBalance", Value.fromBigDecimal(value));
+  }
+
+  get token(): string {
+    let value = this.get("token");
+    return value.toString();
+  }
+
+  set token(value: string) {
+    this.set("token", Value.fromString(value));
+  }
+
+  get testValue(): BigDecimal {
+    let value = this.get("testValue");
+    return value.toBigDecimal();
+  }
+
+  set testValue(value: BigDecimal) {
+    this.set("testValue", Value.fromBigDecimal(value));
   }
 }

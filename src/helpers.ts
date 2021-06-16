@@ -1,5 +1,5 @@
-import { BigInt, BigDecimal, Address, ethereum, Bytes } from "@graphprotocol/graph-ts"
-import { Token, Pool } from "../generated/schema"
+import { log, BigInt, BigDecimal, Address, ethereum, Bytes } from "@graphprotocol/graph-ts"
+import { Token, Pool, PoolBalanceSnapshot } from "../generated/schema"
 
 import {
   ERC20
@@ -38,20 +38,44 @@ export let BI_18 = BigInt.fromI32(18)
 //   }
 // }
 
-// NEW
-export function createToken(address: Address, fundAddress: Bytes): Token | null {
-  let token = Token.load(address.toHexString());
+export function fetchTokenDecimals(tokenAddress: Address): BigInt {
+  let contract = ERC20.bind(tokenAddress);
+  // try types uint8 for decimals
+  let decimalValue = null
+  let decimalResult = contract.try_decimals();
+  if (!decimalResult.reverted) {
+    decimalValue = decimalResult.value;
+  }
+  return BigInt.fromI32(decimalValue as i32);
+}
+
+
+// NEW: HANDLE TOKEN ENTITY
+export function createToken(tokenAddress: Address, fundAddress: Address): Token | null {
+  let token = Token.load(tokenAddress.toHexString());
 
   if (token === null) {
-    token = new Token(address.toHexString());
-    let erc20Contract = ERC20.bind(address);
-    let tokenContractBalance = Address.fromString(fundAddress.toHexString());
+    token = new Token(tokenAddress.toHexString());
+    let tokenContract = ERC20.bind(tokenAddress);
+    let pool = Address.fromString(fundAddress.toHexString());
+    let decimals = fetchTokenDecimals(tokenAddress);
 
-    token.name = erc20Contract.name();
-    token.symbol = erc20Contract.symbol();
+    // bail if we couldn't figure out the decimals
+    if (decimals === null) {
+      log.debug('mybug the decimal on token was null', []);
+      // return;
+    }
+
+    // token.poolBalanceSnapshot = poolBalanceSnapshot.id
+    token.name = tokenContract.name();
+    token.symbol = tokenContract.symbol();
+    
+    token.decimals = decimals
+    
     // if token is wETH, do this conversion
     // if not..
-    token.balanceOf = convertTokenToDecimal(erc20Contract.balanceOf(tokenContractBalance), BI_18);
+    // token.balanceOf = convertTokenToDecimal(erc20Contract.balanceOf(fundContractAddress), BI_18);
+    token.amount = convertTokenToDecimal(tokenContract.balanceOf(pool), decimals); // wrong balance.need to apply it to currentBalance
     token.save();
     return token;
   }
@@ -89,5 +113,4 @@ export function convertTokenToDecimal(tokenAmount: BigInt, exchangeDecimals: Big
   }
   return tokenAmount.toBigDecimal().div(exponentToBigDecimal(exchangeDecimals))
 }
-
 
