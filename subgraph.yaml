@@ -69,7 +69,7 @@ dataSources:
         - Exchange
         - Pool
         - Token
-        - ExchangeComplete
+        - PoolBalanceSnapshot
       abis:
         - name: UniswapV2RouterGuard
           file: ./abis/UniswapV2RouterGuard.json
@@ -103,7 +103,7 @@ templates:
         - Withdrawal
         - Pool
         - Token
-        - ExchangeComplete
+        - PoolBalanceSnapshot
       abis:
         - name: PoolLogic
           file: ./abis/PoolLogic.json

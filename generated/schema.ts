@@ -1337,13 +1337,13 @@ export class Pool extends Entity {
     this.set("exchanges", Value.fromStringArray(value));
   }
 
-  get ExchangeCompletes(): Array<string> {
-    let value = this.get("ExchangeCompletes");
+  get PoolBalanceSnapshots(): Array<string> {
+    let value = this.get("PoolBalanceSnapshots");
     return value.toStringArray();
   }
 
-  set ExchangeCompletes(value: Array<string>) {
-    this.set("ExchangeCompletes", Value.fromStringArray(value));
+  set PoolBalanceSnapshots(value: Array<string>) {
+    this.set("PoolBalanceSnapshots", Value.fromStringArray(value));
   }
 }
 
@@ -1405,7 +1405,7 @@ export class Token extends Entity {
   }
 }
 
-export class ExchangeComplete extends Entity {
+export class PoolBalanceSnapshot extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -1413,17 +1413,17 @@ export class ExchangeComplete extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save ExchangeComplete entity without an ID");
+    assert(id !== null, "Cannot save PoolBalanceSnapshot entity without an ID");
     assert(
       id.kind == ValueKind.STRING,
-      "Cannot save ExchangeComplete entity with non-string ID. " +
+      "Cannot save PoolBalanceSnapshot entity with non-string ID. " +
         'Considering using .toHex() to convert the "id" to a string.'
     );
-    store.set("ExchangeComplete", id.toString(), this);
+    store.set("PoolBalanceSnapshot", id.toString(), this);
   }
 
-  static load(id: string): ExchangeComplete | null {
-    return store.get("ExchangeComplete", id) as ExchangeComplete | null;
+  static load(id: string): PoolBalanceSnapshot | null {
+    return store.get("PoolBalanceSnapshot", id) as PoolBalanceSnapshot | null;
   }
 
   get id(): string {

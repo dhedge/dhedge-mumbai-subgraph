@@ -9,7 +9,7 @@ import {
   Exchange,
   Pool,
   Token,
-  ExchangeComplete
+  PoolBalanceSnapshot
 } from '../generated/schema';
 import { 
   createToken,
@@ -39,15 +39,17 @@ export function handleExchange(event: ExchangeEvent): void {
 
     token.name = erc20Contract.name();
     token.symbol = erc20Contract.symbol();
+    // if token is wETH, do this conversion
+    // if not..
     token.balanceOf = convertTokenToDecimal(erc20Contract.balanceOf(tokenContractBalance), BI_18);
     token.save();
   }
 
 
   // HANDLE EXCHANGE COMPLETE
-  let exchangeComplete = ExchangeComplete.load(event.params.fundAddress.toHexString());
+  let exchangeComplete = PoolBalanceSnapshot.load(event.params.fundAddress.toHexString());
   if (exchangeComplete === null) {
-    exchangeComplete = new ExchangeComplete(event.transaction.hash.toHex() + "-" + event.params.dstAsset.toHexString());
+    exchangeComplete = new PoolBalanceSnapshot(event.transaction.hash.toHex() + "-" + event.params.dstAsset.toHexString());
   } else {
     // we need the difference of the balance from last snapshot
     // do the calculation of the difference in here
@@ -73,7 +75,10 @@ export function handleExchange(event: ExchangeEvent): void {
 
   let newBalanceDecimal = convertTokenToDecimal(testDstAsset.balanceOf(testContractBalance), BI_18);
 
-  entity.dstAmount = token.balanceOf;
+  // wrong
+  // entity.dstAmount = token.balanceOf;
+
+  entity.dstAmount = newBalanceDecimal;
 
   exchangeComplete.pool = pool.id;
   exchangeComplete.asset = token.id;
