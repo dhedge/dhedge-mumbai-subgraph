@@ -1337,13 +1337,13 @@ export class Pool extends Entity {
     this.set("exchanges", Value.fromStringArray(value));
   }
 
-  get PoolBalanceSnapshots(): Array<string> {
-    let value = this.get("PoolBalanceSnapshots");
+  get poolBalanceSnapshots(): Array<string> {
+    let value = this.get("poolBalanceSnapshots");
     return value.toStringArray();
   }
 
-  set PoolBalanceSnapshots(value: Array<string>) {
-    this.set("PoolBalanceSnapshots", Value.fromStringArray(value));
+  set poolBalanceSnapshots(value: Array<string>) {
+    this.set("poolBalanceSnapshots", Value.fromStringArray(value));
   }
 }
 

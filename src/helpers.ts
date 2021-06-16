@@ -23,19 +23,39 @@ export let BI_18 = BigInt.fromI32(18)
 
 
 // lets just try and save the token balance to Pool
-export function createToken(address: Address, fundAddress: Bytes): void {
+// export function createToken(address: Address, fundAddress: Bytes): void {
+//   let token = Token.load(address.toHexString());
+
+//   if (token === null) {
+//     token = new Token(address.toHexString());
+//     let tokenContract = ERC20.bind(address);
+//     let tokenContractBalance = Address.fromString(fundAddress.toHexString());
+
+//     token.name = tokenContract.name();
+//     token.symbol = tokenContract.symbol();
+//     token.balanceOf = convertTokenToDecimal(tokenContract.balanceOf(tokenContractBalance), BI_18);
+//     token.save();
+//   }
+// }
+
+// NEW
+export function createToken(address: Address, fundAddress: Bytes): Token | null {
   let token = Token.load(address.toHexString());
 
   if (token === null) {
     token = new Token(address.toHexString());
-    let tokenContract = ERC20.bind(address);
+    let erc20Contract = ERC20.bind(address);
     let tokenContractBalance = Address.fromString(fundAddress.toHexString());
 
-    token.name = tokenContract.name();
-    token.symbol = tokenContract.symbol();
-    token.balanceOf = convertTokenToDecimal(tokenContract.balanceOf(tokenContractBalance), BI_18);
+    token.name = erc20Contract.name();
+    token.symbol = erc20Contract.symbol();
+    // if token is wETH, do this conversion
+    // if not..
+    token.balanceOf = convertTokenToDecimal(erc20Contract.balanceOf(tokenContractBalance), BI_18);
     token.save();
+    return token;
   }
+  return token;
 }
 
 // we could have an Entity called PoolBalance (portfolio)

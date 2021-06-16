@@ -24,32 +24,21 @@ export function handleExchange(event: ExchangeEvent): void {
   );
 
   let contract = PoolLogic.bind(event.params.fundAddress);
-  let pool = Pool.load(event.params.fundAddress.toHexString());
+  let fundAddress = event.params.fundAddress.toHexString();
+  let pool = Pool.load(fundAddress);
+  // let destinationTokenAddress = event.params.dstAsset.toHexString();
+
+  // pass destinationTokenAddress to createToken()
+  let token = createToken(event.params.dstAsset, event.params.fundAddress);
+  // if token is not null, return token and update its balanceOf
+  // we want to be updating token.balanceOf as the latest most up to date snapshot
   
-
-  // SAVE TOKEN (MOVE TO HELPERS)
-  let destinationTokenAddress = event.params.dstAsset.toHexString();
-
-  let token = Token.load(destinationTokenAddress);
-
-  if (token === null) {
-    token = new Token(destinationTokenAddress);
-    let erc20Contract = ERC20.bind(event.params.dstAsset);
-    let tokenContractBalance = Address.fromString(event.params.fundAddress.toHexString());
-
-    token.name = erc20Contract.name();
-    token.symbol = erc20Contract.symbol();
-    // if token is wETH, do this conversion
-    // if not..
-    token.balanceOf = convertTokenToDecimal(erc20Contract.balanceOf(tokenContractBalance), BI_18);
-    token.save();
-  }
 
 
   // HANDLE EXCHANGE COMPLETE
-  let exchangeComplete = PoolBalanceSnapshot.load(event.params.fundAddress.toHexString());
-  if (exchangeComplete === null) {
-    exchangeComplete = new PoolBalanceSnapshot(event.transaction.hash.toHex() + "-" + event.params.dstAsset.toHexString());
+  let poolBalanceSnapshot = PoolBalanceSnapshot.load(event.params.fundAddress.toHexString());
+  if (poolBalanceSnapshot === null) {
+    poolBalanceSnapshot = new PoolBalanceSnapshot(event.transaction.hash.toHex() + "-" + event.params.dstAsset.toHexString());
   } else {
     // we need the difference of the balance from last snapshot
     // do the calculation of the difference in here
@@ -60,14 +49,14 @@ export function handleExchange(event: ExchangeEvent): void {
     let testContractBalance = Address.fromString(event.params.fundAddress.toHexString());
 
     let newBalanceDecimal = convertTokenToDecimal(testDstAsset.balanceOf(testContractBalance), BI_18);
-    let oldBalanceDecimal = exchangeComplete.balance;
+    let oldBalanceDecimal = poolBalanceSnapshot.balance;
     // newBalanceDecimal - oldBalanceDecimal 
 
     entity.dstAmount = token.balanceOf;
     // let result = newBalanceDecimal - oldBalanceDecimal;
 
     // exchangeComplete.balance = result // should fetch the difference in balance
-    exchangeComplete.balance = newBalanceDecimal // should fetch the difference in balance
+    poolBalanceSnapshot.balance = newBalanceDecimal // should fetch the difference in balance
   }
 
   let testDstAsset = ERC20.bind(event.params.dstAsset);
@@ -80,11 +69,11 @@ export function handleExchange(event: ExchangeEvent): void {
 
   entity.dstAmount = newBalanceDecimal;
 
-  exchangeComplete.pool = pool.id;
-  exchangeComplete.asset = token.id;
+  poolBalanceSnapshot.pool = pool.id;
+  poolBalanceSnapshot.asset = token.id;
   // exchangeComplete.balance = token.balanceOf; // update this with difference
-  exchangeComplete.balance = newBalanceDecimal; // update this with difference
-  exchangeComplete.save();
+  poolBalanceSnapshot.balance = newBalanceDecimal; // update this with difference
+  poolBalanceSnapshot.save();
   // END EXCHANGE COMPLETE
 
 

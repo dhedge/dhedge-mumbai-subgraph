@@ -154,7 +154,7 @@ type Pool @entity {
   deposits: [Deposit!]! @derivedFrom(field: "pool")
   withdrawals: [Withdrawal!]! @derivedFrom(field: "pool")
   exchanges: [Exchange!]! @derivedFrom(field: "pool")
-  PoolBalanceSnapshots: [PoolBalanceSnapshot!]! @derivedFrom(field: "pool")
+  poolBalanceSnapshots: [PoolBalanceSnapshot!]! @derivedFrom(field: "pool")
 }
 
 # 1 asset can belong to many Pools
