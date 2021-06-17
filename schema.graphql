@@ -160,6 +160,9 @@ type Pool @entity {
 type Asset @entity {
   id: ID!
   pool: Pool!
-  balance: BigInt!
+  timestamp: Int! # saved for fast historical lookups
+  block: Int! # saved for fast historical lookups
+  name: String!
+  balance: BigDecimal!
   value: BigInt!
 }

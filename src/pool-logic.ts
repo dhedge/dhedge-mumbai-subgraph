@@ -11,7 +11,8 @@ import {
 } from '../generated/templates/PoolLogic/PoolLogic';
 import { 
   fetchTokenDecimals,
-  convertTokenToDecimal
+  convertTokenToDecimal,
+  fetchTokenName
 } from "./helpers";
 import {
   PoolManagerLogic
@@ -80,19 +81,24 @@ export function handleDeposit(event: DepositEvent): void {
   let asset = Asset.load(event.address.toHexString() + "-" + event.params.assetDeposited.toHexString());
   if (!asset) {
     asset = new Asset(event.address.toHexString() + "-" + event.params.assetDeposited.toHexString());
-    asset.pool = pool.id;
+    asset.pool = pool.id
   }
-  // convertTokenToDecimal
-  // asset.balance = tryAssetBalance.value;
-  let decimals = fetchTokenDecimals(event.params.assetDeposited);
+  let decimals = fetchTokenDecimals(event.params.assetDeposited)
   let balanceTest = convertTokenToDecimal(tryAssetBalance.value, decimals)
-  asset.balance = balanceTest
+
+  let timestamp = event.block.timestamp.toI32()
+  asset.timestamp = timestamp
+  asset.block = event.block.number.toI32()
+  // snapshot.timestamp = timestamp
+  // snapshot.block = event.block.number.toI32()
+  asset.name = fetchTokenName(event.params.assetDeposited)
+  asset.balance = balanceTest; // correct conversion
   asset.value = assetValue;
-  asset.save()
+  asset.save();
 
 
   // Pool Entity
-  pool.manager = managerAddress;
+  pool.manager = managerAddress
   pool.name = poolContract.name();
   pool.managerName = poolContract.managerName();
   pool.totalSupply = poolContract.totalSupply();

@@ -1,6 +1,8 @@
-import { dataSource, log, Address, BigInt, BigDecimal } from '@graphprotocol/graph-ts';
+import { log, Address, BigInt, BigDecimal } from '@graphprotocol/graph-ts';
 
-import { ERC20 } from '../generated/templates/PoolLogic/ERC20';
+import { ERC20 } from '../generated/PoolFactory/ERC20';
+import { ERC20NameBytes } from '../generated/PoolFactory/ERC20NameBytes';
+// import { ERC20 } from '../generated/templates/PoolLogic/ERC20';
 
 export let ZERO_BI = BigInt.fromI32(0)
 export let ONE_BI = BigInt.fromI32(1)
@@ -31,4 +33,30 @@ export function convertTokenToDecimal(tokenAmount: BigInt, exchangeDecimals: Big
     return tokenAmount.toBigDecimal()
   }
   return tokenAmount.toBigDecimal().div(exponentToBigDecimal(exchangeDecimals))
+}
+
+export function fetchTokenName(tokenAddress: Address): string {
+  let contract = ERC20.bind(tokenAddress)
+  let contractNameBytes = ERC20NameBytes.bind(tokenAddress)
+
+  // try types string and bytes32 for name
+  let nameValue = 'unknown'
+  let nameResult = contract.try_name()
+  if (nameResult.reverted) {
+    let nameResultBytes = contractNameBytes.try_name()
+    if (!nameResultBytes.reverted) {
+      // for broken exchanges that have no name function exposed
+      if (!isNullEthValue(nameResultBytes.value.toHexString())) {
+        nameValue = nameResultBytes.value.toString()
+      }
+    }
+  } else {
+    nameValue = nameResult.value
+  }
+
+  return nameValue
+}
+
+export function isNullEthValue(value: string): boolean {
+  return value == '0x0000000000000000000000000000000000000000000000000000000000000001'
 }

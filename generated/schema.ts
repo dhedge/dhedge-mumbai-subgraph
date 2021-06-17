@@ -1394,13 +1394,40 @@ export class Asset extends Entity {
     this.set("pool", Value.fromString(value));
   }
 
-  get balance(): BigInt {
-    let value = this.get("balance");
-    return value.toBigInt();
+  get timestamp(): i32 {
+    let value = this.get("timestamp");
+    return value.toI32();
   }
 
-  set balance(value: BigInt) {
-    this.set("balance", Value.fromBigInt(value));
+  set timestamp(value: i32) {
+    this.set("timestamp", Value.fromI32(value));
+  }
+
+  get block(): i32 {
+    let value = this.get("block");
+    return value.toI32();
+  }
+
+  set block(value: i32) {
+    this.set("block", Value.fromI32(value));
+  }
+
+  get name(): string {
+    let value = this.get("name");
+    return value.toString();
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
+
+  get balance(): BigDecimal {
+    let value = this.get("balance");
+    return value.toBigDecimal();
+  }
+
+  set balance(value: BigDecimal) {
+    this.set("balance", Value.fromBigDecimal(value));
   }
 
   get value(): BigInt {
