@@ -9,7 +9,10 @@ import {
   Withdrawal as WithdrawalEvent,
   PoolLogic
 } from '../generated/templates/PoolLogic/PoolLogic';
-import { fetchTokenDecimals } from "./helpers";
+import { 
+  fetchTokenDecimals,
+  convertTokenToDecimal
+} from "./helpers";
 import {
   PoolManagerLogic
 } from '../generated/templates/PoolLogic/PoolManagerLogic';
@@ -51,8 +54,6 @@ export function handleDeposit(event: DepositEvent): void {
   }
 
   let poolContract = PoolLogic.bind(event.address);
-  // let decimals = poolContract.decimals();
-  let decimals = fetchTokenDecimals(event.params.assetDeposited)
     
   // maybe bind this to PoolManagerLogic contract to get FundComposition function
   let managerAddress = poolContract.poolManagerLogic();
@@ -81,7 +82,11 @@ export function handleDeposit(event: DepositEvent): void {
     asset = new Asset(event.address.toHexString() + "-" + event.params.assetDeposited.toHexString());
     asset.pool = pool.id;
   }
-  asset.balance = tryAssetBalance.value;
+  // convertTokenToDecimal
+  // asset.balance = tryAssetBalance.value;
+  let decimals = fetchTokenDecimals(event.params.assetDeposited);
+  let balanceTest = convertTokenToDecimal(tryAssetBalance.value, decimals)
+  asset.balance = balanceTest
   asset.value = assetValue;
   asset.save()
 
