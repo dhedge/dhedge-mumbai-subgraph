@@ -49,13 +49,11 @@ export function fetchTokenDecimals(tokenAddress: Address): BigInt {
   return BigInt.fromI32(decimalValue as i32);
 }
 
-
-// NEW: HANDLE TOKEN ENTITY
 export function createToken(tokenAddress: Address, fundAddress: Address): Token | null {
-  let token = Token.load(tokenAddress.toHexString());
+  let token = Token.load(tokenAddress.toHexString() + "-" + fundAddress.toHexString());
 
   if (token === null) {
-    token = new Token(tokenAddress.toHexString());
+    token = new Token(tokenAddress.toHexString() + "-" + fundAddress.toHexString());
     let tokenContract = ERC20.bind(tokenAddress);
     let pool = Address.fromString(fundAddress.toHexString());
     let decimals = fetchTokenDecimals(tokenAddress);
@@ -66,38 +64,17 @@ export function createToken(tokenAddress: Address, fundAddress: Address): Token 
       // return;
     }
 
-    // token.poolBalanceSnapshot = poolBalanceSnapshot.id
     token.name = tokenContract.name();
     token.symbol = tokenContract.symbol();
-    
-    token.decimals = decimals
-    
-    // if token is wETH, do this conversion
-    // if not..
-    // token.balanceOf = convertTokenToDecimal(erc20Contract.balanceOf(fundContractAddress), BI_18);
-    token.amount = convertTokenToDecimal(tokenContract.balanceOf(pool), decimals); // wrong balance.need to apply it to currentBalance
+    token.decimals = decimals;
+    token.amount = convertTokenToDecimal(tokenContract.balanceOf(pool), decimals);
+
     token.save();
+
     return token;
   }
   return token;
 }
-
-// we could have an Entity called PoolBalance (portfolio)
-// any time there is a Deposit, Withdraw or Exchange event, we need to update PoolBalance entity
-// export function createBalance(tokenAddress: Address, fundAddress: Bytes, event: ethereum.Event): void {  
-//   // load the Token Balance for a fundAddress (ID)
-//   let tokenBalance = TokenBalance.load(fundAddress.toHexString());
-//   if (tokenBalance === null) {
-//     tokenBalance = new TokenBalance(fundAddress.toHexString());
-//     // what contract to bind with?
-//     // this will be called in Exchange, Deposit, Withdrawal events
-//     let contract = PoolLogic.bind(event.address);
-//     // let tokenAddress = contract.dstAsset
-//     createToken(tokenAddress, fundAddress);    
-
-//     tokenBalance.save();
-//   }
-// }
 
 export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
   let bd = BigDecimal.fromString('1')

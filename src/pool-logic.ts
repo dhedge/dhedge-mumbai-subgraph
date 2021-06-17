@@ -9,6 +9,7 @@ import {
   Withdrawal as WithdrawalEvent,
   PoolLogic
 } from '../generated/templates/PoolLogic/PoolLogic';
+import { ERC20 } from "../generated/UniswapV2RouterGuard/ERC20";
 import {
   Approval,
   Deposit,
@@ -18,10 +19,12 @@ import {
   TransactionExecuted,
   Transfer,
   Withdrawal,
-  Pool
+  Pool,
+  PoolBalanceSnapshot,
+  Token,
 } from '../generated/schema';
-import { createToken } from "./helpers";
-import { dataSource, log } from '@graphprotocol/graph-ts';
+import { createToken, convertTokenToDecimal, fetchTokenDecimals } from "./helpers";
+import { dataSource, log, Address } from '@graphprotocol/graph-ts';
 
 export function handleApproval(event: ApprovalEvent): void {
   let entity = new Approval(
@@ -33,6 +36,8 @@ export function handleApproval(event: ApprovalEvent): void {
   entity.save();
 }
 
+
+
 export function handleDeposit(event: DepositEvent): void {
   let entity = new Deposit(
     event.transaction.hash.toHex() + '-' + event.logIndex.toString()
@@ -41,6 +46,21 @@ export function handleDeposit(event: DepositEvent): void {
 
   let id = dataSource.address().toHexString();
   let pool = Pool.load(id);
+
+  // Grab the Asset investor Deposited
+  // take the deposited asset and save it
+  let erc20Contract = ERC20.bind(event.params.assetDeposited);
+  let token = createToken(event.params.assetDeposited, event.params.fundAddress);
+  
+  // let fundAddress = Address.fromString(event.params.fundAddress.toHexString());
+  // let assetBalance = erc20Contract.balanceOf(fundAddress);
+  let decimals = fetchTokenDecimals(event.params.assetDeposited);
+  // let quantity = convertTokenToDecimal(assetBalance, decimals);
+  let poolAddress = Address.fromString(event.params.fundAddress.toHexString());
+  let balance = erc20Contract.balanceOf(poolAddress);
+  let quantity = convertTokenToDecimal(balance, decimals);
+  
+
   if (!pool) {
     pool = new Pool(id);
     pool.fundAddress = event.params.fundAddress;
@@ -48,6 +68,20 @@ export function handleDeposit(event: DepositEvent): void {
   pool.name = contract.name();
   pool.managerName = contract.managerName();
   pool.totalSupply = contract.totalSupply();
+  
+  // on Deposit event we want to get the current balance of the fundAddress
+  let poolBalanceSnapshot = PoolBalanceSnapshot.load(id);
+  if (poolBalanceSnapshot === null) {
+    poolBalanceSnapshot = new PoolBalanceSnapshot(id);
+  }
+  poolBalanceSnapshot.testValue = quantity // should fetch the difference in balance
+  poolBalanceSnapshot.currentBalance = token.amount // should fetch the difference in balance
+  poolBalanceSnapshot.pool = pool.id;
+  poolBalanceSnapshot.asset = token.id;
+  poolBalanceSnapshot.token = token.id;
+  poolBalanceSnapshot.currentBalance = token.amount;
+  poolBalanceSnapshot.save();
+
   pool.save();
 
   entity.pool = pool.id;
