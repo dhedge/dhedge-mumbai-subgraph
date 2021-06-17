@@ -44,29 +44,30 @@ export function handleDeposit(event: DepositEvent): void {
   let entity = new Deposit(
     event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   );
-
   // PoolLogic data source
   let id = dataSource.address().toHexString();
-  let pool = Pool.load(id);
-  if (!pool) {
-    pool = new Pool(id);
-    pool.fundAddress = event.params.fundAddress;
-  }
+  let poolTokenDecimals = fetchTokenDecimals(event.address);
 
   // Manager Logic
   let poolContract = PoolLogic.bind(event.address);
   let managerAddress = poolContract.poolManagerLogic();
   let managerContract = PoolManagerLogic.bind(managerAddress);
   
-  let tryAssetBalance = managerContract.try_assetBalance(event.params.assetDeposited);
-  if (tryAssetBalance.reverted) {
-    log.info(
-      'assetBalance was reverted in tx hash {} at block number: {}',
-      [event.transaction.hash.toHex(), event.block.number.toString()]
-    );
-    return;
+  let pool = Pool.load(id);
+  if (!pool) {
+    pool = new Pool(id);
+    pool.fundAddress = event.params.fundAddress;
   }
-  let assetValue = managerContract.assetValue(event.params.assetDeposited, event.params.valueDeposited);
+
+  // let tryAssetBalance = managerContract.try_assetBalance(event.params.assetDeposited);
+  // if (tryAssetBalance.reverted) {
+  //   log.info(
+  //     'assetBalance was reverted in tx hash {} at block number: {}',
+  //     [event.transaction.hash.toHex(), event.block.number.toString()]
+  //   );
+  //   return;
+  // }
+  // let assetValue = managerContract.assetValue(event.params.assetDeposited, event.params.valueDeposited);
   
   // Create or Load Asset entity
   let asset = Asset.load(event.address.toHexString() + "-" + event.params.assetDeposited.toHexString());
@@ -92,23 +93,34 @@ export function handleDeposit(event: DepositEvent): void {
 
 
   // Pool Entity
+  let tryPoolName = poolContract.try_name()
+  if (tryPoolName.reverted) {
+    log.info(
+      'pool name was reverted in tx hash: {} at blockNumber: {}', 
+      [event.transaction.hash.toHex(), event.block.number.toString()]
+    );
+    return;
+  }
+  let poolName = tryPoolName.value;
+  pool.name = poolName;
   pool.manager = managerAddress
-  pool.name = poolContract.name();
+  pool.manager = managerContract.manager();
   pool.managerName = poolContract.managerName();
-  pool.totalSupply = poolContract.totalSupply();
+  pool.totalSupply = convertTokenToDecimal(poolContract.totalSupply(), poolTokenDecimals);
   pool.save();
 
   // Deposit Entity
   entity.pool = pool.id;
   entity.fundAddress = event.params.fundAddress;
-  entity.totalSupply = poolContract.totalSupply();
+  entity.totalSupply = convertTokenToDecimal(poolContract.totalSupply(), poolTokenDecimals);
   entity.investor = event.params.investor;
   entity.assetDeposited = event.params.assetDeposited;
   entity.valueDeposited = event.params.valueDeposited;
-  entity.fundTokensReceived = event.params.fundTokensReceived;
-  entity.totalInvestorFundTokens = event.params.totalInvestorFundTokens;
+  entity.fundTokensReceived = convertTokenToDecimal(event.params.fundTokensReceived, poolTokenDecimals);
+  entity.totalInvestorFundTokens = convertTokenToDecimal(event.params.totalInvestorFundTokens, poolTokenDecimals);
   entity.fundValue = event.params.fundValue;
   entity.time = event.params.time;
+  entity.block = event.block.number.toI32()
   entity.save();
 }
 
@@ -171,27 +183,45 @@ export function handleWithdrawal(event: WithdrawalEvent): void {
   let entity = new Withdrawal(
     event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   );
-  let contract = PoolLogic.bind(event.address);
-
   let id = dataSource.address().toHexString();
+
+  let poolContract = PoolLogic.bind(event.address);
+  let poolTokenDecimals = fetchTokenDecimals(event.address);
+
+  // Manager Logic
+  let managerAddress = poolContract.poolManagerLogic();
+  let managerContract = PoolManagerLogic.bind(managerAddress);
+
   let pool = Pool.load(id);
   if (!pool) {
     pool = new Pool(id);
     pool.fundAddress = event.params.fundAddress;
   }
-  pool.name = contract.name();
-  pool.managerName = contract.managerName();
-  pool.totalSupply = contract.totalSupply();
+
+  let tryPoolName = poolContract.try_name()
+  if (tryPoolName.reverted) {
+    log.info(
+      'pool name was reverted in tx hash: {} at blockNumber: {}', 
+      [event.transaction.hash.toHex(), event.block.number.toString()]
+    );
+    return;
+  }
+  let poolName = tryPoolName.value;
+  pool.name = poolName;
+  pool.manager = managerContract.manager();
+  pool.managerName = poolContract.managerName();
+  pool.totalSupply = convertTokenToDecimal(poolContract.totalSupply(), poolTokenDecimals);
   pool.save();
 
   entity.pool = pool.id;
   entity.fundAddress = event.params.fundAddress;
-  entity.totalSupply = contract.totalSupply();
+  entity.totalSupply = convertTokenToDecimal(poolContract.totalSupply(), poolTokenDecimals);
   entity.investor = event.params.investor;
   entity.valueWithdrawn = event.params.valueWithdrawn;
-  entity.fundTokensWithdrawn = event.params.fundTokensWithdrawn;
-  entity.totalInvestorFundTokens = event.params.totalInvestorFundTokens;
+  entity.fundTokensWithdrawn = convertTokenToDecimal(event.params.fundTokensWithdrawn, poolTokenDecimals);
+  entity.totalInvestorFundTokens = convertTokenToDecimal(event.params.totalInvestorFundTokens, poolTokenDecimals);
   entity.fundValue = event.params.fundValue;
   entity.time = event.params.time;
+  entity.block = event.block.number.toI32();
   entity.save();
 }
