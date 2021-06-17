@@ -142,24 +142,38 @@ type Exchange @entity {
   dstAsset: Bytes! # address
   time: BigInt! # uint256
   pool: Pool!
+  dstAmount: BigDecimal!
 }
 
 type Pool @entity {
   id: ID!
   fundAddress: Bytes! # address
   name: String! # string
+  # manager: ADD MANAGER
   managerName: String! # string`
   totalSupply: BigInt! # uint256
   deposits: [Deposit!]! @derivedFrom(field: "pool")
   withdrawals: [Withdrawal!]! @derivedFrom(field: "pool")
   exchanges: [Exchange!]! @derivedFrom(field: "pool")
+  poolBalanceSnapshots: [PoolBalanceSnapshot!]! @derivedFrom(field: "pool")
 }
 
-type Exchange @entity {
+# 1 asset can belong to many Pools
+type Token @entity {
+  id: ID! # sourceAsset (address)
+  name: String!
+  symbol: String!
+  decimals: BigInt!
+  amount: BigDecimal!
+  poolBalanceSnapshots: [PoolBalanceSnapshot!]! @derivedFrom(field: "token")
+}
+
+# when queried, should returns an Array of tokens (assets)
+type PoolBalanceSnapshot @entity {
   id: ID!
-  fundAddress: Bytes! # address
-  sourceAsset: Bytes! # address
-  sourceAmount: BigInt! # uint256
-  dstAsset: Bytes! # address
-  time: BigInt! # uint256
+  pool: Pool!
+  asset: Token!
+  currentBalance: BigDecimal!
+  token: Token!
+  testValue: BigDecimal! # maybe this needs to be in Token
 }
