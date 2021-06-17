@@ -165,4 +165,5 @@ type Asset @entity {
   name: String!
   balance: BigDecimal!
   value: BigInt!
+  decimals: BigInt!
 }

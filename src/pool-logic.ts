@@ -1,3 +1,4 @@
+import { ERC20 } from '../generated/PoolFactory/ERC20';
 import {
   Approval as ApprovalEvent,
   Deposit as DepositEvent,
@@ -12,7 +13,8 @@ import {
 import { 
   fetchTokenDecimals,
   convertTokenToDecimal,
-  fetchTokenName
+  fetchTokenName,
+  BI_18
 } from "./helpers";
 import {
   PoolManagerLogic
@@ -29,7 +31,7 @@ import {
   Pool,
   Asset
 } from '../generated/schema';
-import { dataSource, log } from '@graphprotocol/graph-ts';
+import { dataSource, log, Address } from '@graphprotocol/graph-ts';
 
 export function handleApproval(event: ApprovalEvent): void {
   let entity = new Approval(
@@ -56,10 +58,7 @@ export function handleDeposit(event: DepositEvent): void {
 
   let poolContract = PoolLogic.bind(event.address);
     
-  // maybe bind this to PoolManagerLogic contract to get FundComposition function
   let managerAddress = poolContract.poolManagerLogic();
-  // dunno if i need to pass in fundAddress or managerAddress
-  // let managerContract = PoolManagerLogic.bind(event.address);
   let managerContract = PoolManagerLogic.bind(managerAddress);
   
   let tryAssetBalance = managerContract.try_assetBalance(event.params.assetDeposited);
@@ -83,17 +82,21 @@ export function handleDeposit(event: DepositEvent): void {
     asset = new Asset(event.address.toHexString() + "-" + event.params.assetDeposited.toHexString());
     asset.pool = pool.id
   }
-  let decimals = fetchTokenDecimals(event.params.assetDeposited)
-  let balanceTest = convertTokenToDecimal(tryAssetBalance.value, decimals)
+
+  let decimals = fetchTokenDecimals(event.params.assetDeposited);
+  let erc20Contract = ERC20.bind(event.params.assetDeposited);
+  let fundAddress = Address.fromString(event.params.fundAddress.toHexString());
+  
+  let currentFormattedBalance = convertTokenToDecimal(erc20Contract.balanceOf(fundAddress), decimals);
 
   let timestamp = event.block.timestamp.toI32()
   asset.timestamp = timestamp
   asset.block = event.block.number.toI32()
-  // snapshot.timestamp = timestamp
-  // snapshot.block = event.block.number.toI32()
   asset.name = fetchTokenName(event.params.assetDeposited)
-  asset.balance = balanceTest; // correct conversion
+  asset.balance = currentFormattedBalance; 
   asset.value = assetValue;
+
+  asset.decimals = decimals;
   asset.save();
 
 

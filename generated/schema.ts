@@ -1438,4 +1438,13 @@ export class Asset extends Entity {
   set value(value: BigInt) {
     this.set("value", Value.fromBigInt(value));
   }
+
+  get decimals(): BigInt {
+    let value = this.get("decimals");
+    return value.toBigInt();
+  }
+
+  set decimals(value: BigInt) {
+    this.set("decimals", Value.fromBigInt(value));
+  }
 }
