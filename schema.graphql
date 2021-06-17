@@ -73,15 +73,16 @@ type Approval @entity {
 
 type Deposit @entity {
   id: ID!
-  fundAddress: Bytes! # address
-  investor: Bytes! # address
-  assetDeposited: Bytes! # address
-  valueDeposited: BigInt! # uint256
-  fundTokensReceived: BigInt! # uint256
-  totalInvestorFundTokens: BigInt! # uint256
-  fundValue: BigInt! # uint256
-  totalSupply: BigInt! # uint256
-  time: BigInt! # uint256
+  fundAddress: Bytes!
+  investor: Bytes!
+  assetDeposited: Bytes!
+  valueDeposited: BigInt!
+  fundTokensReceived: BigDecimal!
+  totalInvestorFundTokens: BigDecimal!
+  fundValue: BigInt!
+  totalSupply: BigDecimal!
+  time: BigInt!
+  block: Int!
   pool: Pool!
 }
 
@@ -123,14 +124,15 @@ type Transfer @entity {
 
 type Withdrawal @entity {
   id: ID!
-  fundAddress: Bytes! # address
-  investor: Bytes! # address
-  valueWithdrawn: BigInt! # uint256
-  fundTokensWithdrawn: BigInt! # uint256
-  totalInvestorFundTokens: BigInt! # uint256
-  fundValue: BigInt! # uint256
-  totalSupply: BigInt! # uint256
-  time: BigInt! # uint256
+  fundAddress: Bytes!
+  investor: Bytes!
+  valueWithdrawn: BigInt!
+  fundTokensWithdrawn: BigDecimal!
+  totalInvestorFundTokens: BigDecimal!
+  fundValue: BigInt!
+  totalSupply: BigDecimal!
+  time: BigInt!
+  block: Int!
   pool: Pool!
 }
 
@@ -148,9 +150,9 @@ type Pool @entity {
   id: ID!
   fundAddress: Bytes! # address
   name: String! # string
-  manager: Bytes # uint256
+  manager: Bytes! # uint256
   managerName: String! # string`
-  totalSupply: BigInt! # uint256
+  totalSupply: BigDecimal!
   deposits: [Deposit!]! @derivedFrom(field: "pool")
   withdrawals: [Withdrawal!]! @derivedFrom(field: "pool")
   exchanges: [Exchange!]! @derivedFrom(field: "pool")
