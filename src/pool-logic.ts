@@ -71,11 +71,6 @@ export function handleDeposit(event: DepositEvent): void {
   let assetValue = managerContract.assetValue(event.params.assetDeposited, event.params.valueDeposited);
   
   // Create or Load Asset entity
-    // this links the (fundAddress + assetDeposited), making it easy to 
-    // Fund A deposits -> 13.233 wETH
-    // Fund B deposits -> 0.05324 wETH
-    // Every Fund will have their own -wETH id
-    // that Asset instance will be the source of truth 
   let asset = Asset.load(event.address.toHexString() + "-" + event.params.assetDeposited.toHexString());
   if (!asset) {
     asset = new Asset(event.address.toHexString() + "-" + event.params.assetDeposited.toHexString());
@@ -94,7 +89,6 @@ export function handleDeposit(event: DepositEvent): void {
   asset.name = fetchTokenName(event.params.assetDeposited)
   asset.balance = currentFormattedBalance; 
   // asset.value = assetValue;
-
   asset.decimals = decimals;
   asset.save();
 
