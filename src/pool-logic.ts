@@ -10,6 +10,9 @@ import {
   PoolLogic
 } from '../generated/templates/PoolLogic/PoolLogic';
 import {
+  PoolManagerLogic
+} from '../generated/templates/PoolLogic/PoolManagerLogic';
+import {
   Approval,
   Deposit,
   ManagerFeeMinted,
@@ -18,7 +21,8 @@ import {
   TransactionExecuted,
   Transfer,
   Withdrawal,
-  Pool
+  Pool,
+  Asset
 } from '../generated/schema';
 import { dataSource, log } from '@graphprotocol/graph-ts';
 
@@ -36,22 +40,61 @@ export function handleDeposit(event: DepositEvent): void {
   let entity = new Deposit(
     event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   );
-  let contract = PoolLogic.bind(event.address);  
 
+  // PoolLogic data source
   let id = dataSource.address().toHexString();
   let pool = Pool.load(id);
   if (!pool) {
     pool = new Pool(id);
     pool.fundAddress = event.params.fundAddress;
   }
-  pool.name = contract.name();
-  pool.managerName = contract.managerName();
-  pool.totalSupply = contract.totalSupply();
+
+  let poolContract = PoolLogic.bind(event.address);
+  let decimals = poolContract.decimals();
+    
+  // maybe bind this to PoolManagerLogic contract to get FundComposition function
+  let managerAddress = poolContract.poolManagerLogic();
+  // dunno if i need to pass in fundAddress or managerAddress
+  // let managerContract = PoolManagerLogic.bind(event.address);
+  let managerContract = PoolManagerLogic.bind(managerAddress);
+  
+  let tryAssetBalance = managerContract.try_assetBalance(event.params.assetDeposited);
+  if (tryAssetBalance.reverted) {
+    log.info(
+      'assetBalance was reverted in tx hash {} at block number: {}',
+      [event.transaction.hash.toHex(), event.block.number.toString()]
+    );
+    return;
+  }
+  let assetValue = managerContract.assetValue(event.params.assetDeposited, event.params.valueDeposited);
+  
+  // Create or Load Asset entity
+    // this links the (fundAddress + assetDeposited), making it easy to 
+    // Fund A deposits -> 13.233 wETH
+    // Fund B deposits -> 0.05324 wETH
+    // Every Fund will have their own -wETH id
+    // that Asset instance will be the source of truth 
+  let asset = Asset.load(event.address.toHexString() + "-" + event.params.assetDeposited.toHexString());
+  if (!asset) {
+    asset = new Asset(event.address.toHexString() + "-" + event.params.assetDeposited.toHexString());
+    asset.pool = pool.id;
+  }
+  asset.balance = tryAssetBalance.value;
+  asset.value = assetValue;
+  asset.save()
+
+
+  // Pool Entity
+  pool.manager = managerAddress;
+  pool.name = poolContract.name();
+  pool.managerName = poolContract.managerName();
+  pool.totalSupply = poolContract.totalSupply();
   pool.save();
 
+  // Exchange Entity
   entity.pool = pool.id;
   entity.fundAddress = event.params.fundAddress;
-  entity.totalSupply = contract.totalSupply();
+  entity.totalSupply = poolContract.totalSupply();
   entity.investor = event.params.investor;
   entity.assetDeposited = event.params.assetDeposited;
   entity.valueDeposited = event.params.valueDeposited;

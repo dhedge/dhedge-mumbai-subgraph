@@ -71,6 +71,8 @@ dataSources:
           file: ./abis/UniswapV2RouterGuard.json
         - name: PoolLogic
           file: ./abis/PoolLogic.json
+        - name: PoolManagerLogic
+          file: ./abis/PoolManagerLogic.json
       eventHandlers:
         - event: Exchange(address,address,uint256,address,uint256)
           handler: handleExchange
@@ -99,6 +101,8 @@ templates:
       abis:
         - name: PoolLogic
           file: ./abis/PoolLogic.json
+        - name: PoolManagerLogic
+          file: ./abis/PoolManagerLogic.json
       eventHandlers:
         - event: Approval(indexed address,indexed address,uint256)
           handler: handleApproval
