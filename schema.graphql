@@ -148,18 +148,22 @@ type Pool @entity {
   id: ID!
   fundAddress: Bytes! # address
   name: String! # string
+  manager: Bytes # uint256
   managerName: String! # string`
   totalSupply: BigInt! # uint256
   deposits: [Deposit!]! @derivedFrom(field: "pool")
   withdrawals: [Withdrawal!]! @derivedFrom(field: "pool")
   exchanges: [Exchange!]! @derivedFrom(field: "pool")
+  assets: [Asset!]! @derivedFrom(field: "pool")
 }
 
-type Exchange @entity {
+type Asset @entity {
   id: ID!
-  fundAddress: Bytes! # address
-  sourceAsset: Bytes! # address
-  sourceAmount: BigInt! # uint256
-  dstAsset: Bytes! # address
-  time: BigInt! # uint256
+  pool: Pool!
+  timestamp: Int! # saved for fast historical lookups
+  block: Int! # saved for fast historical lookups
+  name: String!
+  balance: BigDecimal!
+  value: BigInt!
+  decimals: BigInt!
 }

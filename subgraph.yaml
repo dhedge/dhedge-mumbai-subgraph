@@ -28,6 +28,10 @@ dataSources:
       abis:
         - name: PoolFactory
           file: ./abis/PoolFactory.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: ERC20NameBytes
+          file: ./abis/ERC20NameBytes.json
       eventHandlers:
         - event: DaoAddressSet(address)
           handler: handleDaoAddressSet
@@ -71,6 +75,8 @@ dataSources:
           file: ./abis/UniswapV2RouterGuard.json
         - name: PoolLogic
           file: ./abis/PoolLogic.json
+        - name: PoolManagerLogic
+          file: ./abis/PoolManagerLogic.json
       eventHandlers:
         - event: Exchange(address,address,uint256,address,uint256)
           handler: handleExchange
@@ -99,6 +105,10 @@ templates:
       abis:
         - name: PoolLogic
           file: ./abis/PoolLogic.json
+        - name: PoolManagerLogic
+          file: ./abis/PoolManagerLogic.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: Approval(indexed address,indexed address,uint256)
           handler: handleApproval
