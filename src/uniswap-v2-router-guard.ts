@@ -1,13 +1,7 @@
 import { ERC20 } from '../generated/UniswapV2RouterGuard/ERC20';
-import {
-  PoolLogic,
-} from '../generated/templates/PoolLogic/PoolLogic';
-import {
-  PoolManagerLogic
-} from '../generated/templates/PoolLogic/PoolManagerLogic';
-import {
-  Exchange as ExchangeEvent,
-} from '../generated/UniswapV2RouterGuard/UniswapV2RouterGuard';
+import { PoolLogic,} from '../generated/templates/PoolLogic/PoolLogic';
+import { PoolManagerLogic } from '../generated/templates/PoolLogic/PoolManagerLogic';
+import { Exchange as ExchangeEvent } from '../generated/UniswapV2RouterGuard/UniswapV2RouterGuard';
 import { 
   fetchTokenDecimals,
   convertTokenToDecimal,

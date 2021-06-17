@@ -15,9 +15,7 @@ import {
   convertTokenToDecimal,
   fetchTokenName,
 } from "./helpers";
-import {
-  PoolManagerLogic
-} from '../generated/templates/PoolLogic/PoolManagerLogic';
+import { PoolManagerLogic } from '../generated/templates/PoolLogic/PoolManagerLogic';
 import {
   Approval,
   Deposit,
