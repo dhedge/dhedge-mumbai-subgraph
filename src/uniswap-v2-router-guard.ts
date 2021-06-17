@@ -1,51 +1,94 @@
+import { ERC20 } from '../generated/UniswapV2RouterGuard/ERC20';
 import {
-  PoolLogic
+  PoolLogic,
 } from '../generated/templates/PoolLogic/PoolLogic';
+import {
+  PoolManagerLogic
+} from '../generated/templates/PoolLogic/PoolManagerLogic';
 import {
   Exchange as ExchangeEvent,
 } from '../generated/UniswapV2RouterGuard/UniswapV2RouterGuard';
+import { 
+  fetchTokenDecimals,
+  convertTokenToDecimal,
+  fetchTokenName,
+} from "./helpers";
 import {
+  Asset,
   Exchange,
   Pool
 } from '../generated/schema';
-import { dataSource, log } from '@graphprotocol/graph-ts';
+import { dataSource, log, Address } from '@graphprotocol/graph-ts';
 
 export function handleExchange(event: ExchangeEvent): void {
   let entity = new Exchange(
     event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   );
 
-  // log.info(
-  //   'exchange entity in tx hash: {} at blockNumber: {}', 
-  //   [event.transaction.hash.toHex(), event.block.number.toString()]
-  // );
-
-  // let contract = PoolLogic.bind(event.address);
-  let contract = PoolLogic.bind(event.params.fundAddress);
-
-  // dataSource.address() will give you the address of the contract that datasource is listening to.
-  // try with: event.params.fundAddress
-  // let id = dataSource.address().toHexString();
-  // log.info(
-  //   'exchange entity logging dataSource.address from dataSource: {}',
-  //   [id]
-  // );
-
-  // let pool = Pool.load(id);
+  // PoolLogic
   let pool = Pool.load(event.params.fundAddress.toHexString());
-
-  // log.info(
-  //   'logging pool entity id: {}',
-  //   [pool.id]
-  // )
-
   if (!pool) {
-    // pool = new Pool(id);
     pool = new Pool(event.params.fundAddress.toHexString());
     pool.fundAddress = event.params.fundAddress;
   }
-  let tryPoolName = contract.try_name()
 
+  // Manager Logic
+  let poolContract = PoolLogic.bind(event.params.fundAddress);
+  // or let poolContract = PoolLogic.bind(event.address);
+  let managerAddress = poolContract.poolManagerLogic();
+  let managerContract = PoolManagerLogic.bind(managerAddress);
+
+
+  let trySourceAssetBalance = managerContract.try_assetBalance(event.params.sourceAsset);
+  if (trySourceAssetBalance.reverted) {
+    log.info(
+      'SourceAssetBalance was reverted in tx hash {} at block number: {}',
+      [event.transaction.hash.toHex(), event.block.number.toString()]
+    );
+    return;
+  }
+  // event.params.valueDeposited doesn't exist, so cannot use managerContract.assetValue(asset, amount)
+
+  // Create or Update Asset entity for the 2 tokens being traded  
+  let asset0 = Asset.load(pool.fundAddress.toHexString() + "-" + event.params.dstAsset.toHexString())
+  if (!asset0) {
+    asset0 = new Asset(pool.fundAddress.toHexString() + "-" + event.params.dstAsset.toHexString())
+    asset0.pool = pool.id
+  }
+  let asset0Decimals = fetchTokenDecimals(event.params.dstAsset);
+  let erc20Contract = ERC20.bind(event.params.dstAsset);
+  let fundAddress = Address.fromString(event.params.fundAddress.toHexString());
+  let currentFormattedBalance = convertTokenToDecimal(erc20Contract.balanceOf(fundAddress), asset0Decimals);
+  let timestamp0 = event.block.timestamp.toI32()
+
+  asset0.timestamp = timestamp0
+  asset0.block = event.block.number.toI32()
+  asset0.name = fetchTokenName(event.params.dstAsset)
+  asset0.balance = currentFormattedBalance; 
+  // asset.value = assetValue;
+  asset0.decimals = asset0Decimals;
+  asset0.save();
+
+
+  let asset1 = Asset.load(pool.fundAddress.toHexString() + "-" + event.params.sourceAsset.toHexString())
+  if (!asset1) {
+    asset1 = new Asset(pool.fundAddress.toHexString() + "-" + event.params.sourceAsset.toHexString())
+    asset1.pool = pool.id
+  }
+  let asset1Decimals = fetchTokenDecimals(event.params.sourceAsset);
+  let erc20ContractB = ERC20.bind(event.params.sourceAsset);
+  let currentFormattedBalanceB = convertTokenToDecimal(erc20ContractB.balanceOf(fundAddress), asset1Decimals);
+  let timestampAsset1 = event.block.timestamp.toI32() 
+
+  asset1.timestamp = timestampAsset1 
+  asset1.block = event.block.number.toI32()
+  asset1.name = fetchTokenName(event.params.sourceAsset)
+  asset1.balance = currentFormattedBalanceB; 
+  asset1.decimals = asset1Decimals;
+  asset1.save();
+
+  // Pool Entity
+  let tryPoolName = poolContract.try_name()
   if (tryPoolName.reverted) {
     log.info(
       'pool name was reverted in tx hash: {} at blockNumber: {}', 
@@ -53,15 +96,13 @@ export function handleExchange(event: ExchangeEvent): void {
     );
     return;
   }
-
   let poolName = tryPoolName.value;
   pool.name = poolName;
-
-  pool.managerName = contract.managerName();
-  pool.totalSupply = contract.totalSupply();
-  // will maybe need to add pool.balanceSnapshot
+  pool.managerName = poolContract.managerName();
+  pool.totalSupply = poolContract.totalSupply();
   pool.save();
 
+  // Exchange Entity
   entity.pool = pool.id;
   entity.fundAddress = event.params.fundAddress;
   entity.sourceAsset = event.params.sourceAsset;

@@ -14,7 +14,6 @@ import {
   fetchTokenDecimals,
   convertTokenToDecimal,
   fetchTokenName,
-  BI_18
 } from "./helpers";
 import {
   PoolManagerLogic
@@ -56,8 +55,8 @@ export function handleDeposit(event: DepositEvent): void {
     pool.fundAddress = event.params.fundAddress;
   }
 
+  // Manager Logic
   let poolContract = PoolLogic.bind(event.address);
-    
   let managerAddress = poolContract.poolManagerLogic();
   let managerContract = PoolManagerLogic.bind(managerAddress);
   
@@ -94,7 +93,7 @@ export function handleDeposit(event: DepositEvent): void {
   asset.block = event.block.number.toI32()
   asset.name = fetchTokenName(event.params.assetDeposited)
   asset.balance = currentFormattedBalance; 
-  asset.value = assetValue;
+  // asset.value = assetValue;
 
   asset.decimals = decimals;
   asset.save();
@@ -107,7 +106,7 @@ export function handleDeposit(event: DepositEvent): void {
   pool.totalSupply = poolContract.totalSupply();
   pool.save();
 
-  // Exchange Entity
+  // Deposit Entity
   entity.pool = pool.id;
   entity.fundAddress = event.params.fundAddress;
   entity.totalSupply = poolContract.totalSupply();

@@ -77,6 +77,8 @@ dataSources:
           file: ./abis/PoolLogic.json
         - name: PoolManagerLogic
           file: ./abis/PoolManagerLogic.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: Exchange(address,address,uint256,address,uint256)
           handler: handleExchange

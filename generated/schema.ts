@@ -1430,15 +1430,6 @@ export class Asset extends Entity {
     this.set("balance", Value.fromBigDecimal(value));
   }
 
-  get value(): BigInt {
-    let value = this.get("value");
-    return value.toBigInt();
-  }
-
-  set value(value: BigInt) {
-    this.set("value", Value.fromBigInt(value));
-  }
-
   get decimals(): BigInt {
     let value = this.get("decimals");
     return value.toBigInt();
