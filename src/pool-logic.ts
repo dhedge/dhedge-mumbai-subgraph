@@ -14,11 +14,8 @@ import {
   fetchTokenDecimals,
   convertTokenToDecimal,
   fetchTokenName,
-  BI_18
 } from "./helpers";
-import {
-  PoolManagerLogic
-} from '../generated/templates/PoolLogic/PoolManagerLogic';
+import { PoolManagerLogic } from '../generated/templates/PoolLogic/PoolManagerLogic';
 import {
   Approval,
   Deposit,
@@ -56,8 +53,8 @@ export function handleDeposit(event: DepositEvent): void {
     pool.fundAddress = event.params.fundAddress;
   }
 
+  // Manager Logic
   let poolContract = PoolLogic.bind(event.address);
-    
   let managerAddress = poolContract.poolManagerLogic();
   let managerContract = PoolManagerLogic.bind(managerAddress);
   
@@ -72,11 +69,6 @@ export function handleDeposit(event: DepositEvent): void {
   let assetValue = managerContract.assetValue(event.params.assetDeposited, event.params.valueDeposited);
   
   // Create or Load Asset entity
-    // this links the (fundAddress + assetDeposited), making it easy to 
-    // Fund A deposits -> 13.233 wETH
-    // Fund B deposits -> 0.05324 wETH
-    // Every Fund will have their own -wETH id
-    // that Asset instance will be the source of truth 
   let asset = Asset.load(event.address.toHexString() + "-" + event.params.assetDeposited.toHexString());
   if (!asset) {
     asset = new Asset(event.address.toHexString() + "-" + event.params.assetDeposited.toHexString());
@@ -94,8 +86,7 @@ export function handleDeposit(event: DepositEvent): void {
   asset.block = event.block.number.toI32()
   asset.name = fetchTokenName(event.params.assetDeposited)
   asset.balance = currentFormattedBalance; 
-  asset.value = assetValue;
-
+  // asset.value = assetValue;
   asset.decimals = decimals;
   asset.save();
 
@@ -107,7 +98,7 @@ export function handleDeposit(event: DepositEvent): void {
   pool.totalSupply = poolContract.totalSupply();
   pool.save();
 
-  // Exchange Entity
+  // Deposit Entity
   entity.pool = pool.id;
   entity.fundAddress = event.params.fundAddress;
   entity.totalSupply = poolContract.totalSupply();
