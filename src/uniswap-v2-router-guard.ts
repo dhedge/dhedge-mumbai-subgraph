@@ -72,12 +72,12 @@ export function handleExchange(event: ExchangeEvent): void {
   let asset1Decimals = fetchTokenDecimals(event.params.sourceAsset);
   let erc20ContractB = ERC20.bind(event.params.sourceAsset);
   let currentFormattedBalanceB = convertTokenToDecimal(erc20ContractB.balanceOf(fundAddress), asset1Decimals);
-  let timestampAsset1 = event.block.timestamp.toI32() 
+  let timestampAsset1 = event.block.timestamp.toI32()
 
-  asset1.timestamp = timestampAsset1 
+  asset1.timestamp = timestampAsset1
   asset1.block = event.block.number.toI32()
   asset1.name = fetchTokenName(event.params.sourceAsset)
-  asset1.balance = currentFormattedBalanceB; 
+  asset1.balance = currentFormattedBalanceB;
   asset1.decimals = asset1Decimals;
   asset1.save();
 
