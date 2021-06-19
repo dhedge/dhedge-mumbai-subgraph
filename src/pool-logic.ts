@@ -14,6 +14,7 @@ import {
   fetchTokenDecimals,
   convertTokenToDecimal,
   fetchTokenName,
+  BI_18
 } from "./helpers";
 import { PoolManagerLogic } from '../generated/templates/PoolLogic/PoolManagerLogic';
 import {
@@ -26,9 +27,10 @@ import {
   Transfer,
   Withdrawal,
   Pool,
-  Asset
+  Asset,
+  Investor
 } from '../generated/schema';
-import { dataSource, log, Address } from '@graphprotocol/graph-ts';
+import { dataSource, log, Address, BigInt, BigDecimal } from '@graphprotocol/graph-ts';
 
 export function handleApproval(event: ApprovalEvent): void {
   let entity = new Approval(
@@ -91,6 +93,17 @@ export function handleDeposit(event: DepositEvent): void {
   asset.decimals = decimals;
   asset.save();
 
+  let investor = Investor.load(event.params.investor.toHexString());
+  if (!investor) {
+    investor = new Investor(event.params.investor.toHexString());
+  }
+  log.info(
+    'logging investor id: {} at blockNumber: {}', 
+    [investor.id, event.block.number.toString()]
+  );
+  // we could capture the valueDeposited and save it to investor
+  investor.save()
+
 
   // Pool Entity
   let tryPoolName = poolContract.try_name()
@@ -111,14 +124,15 @@ export function handleDeposit(event: DepositEvent): void {
 
   // Deposit Entity
   entity.pool = pool.id;
+  entity.investor = investor.id;
   entity.fundAddress = event.params.fundAddress;
   entity.totalSupply = convertTokenToDecimal(poolContract.totalSupply(), poolTokenDecimals);
-  entity.investor = event.params.investor;
+  entity.investorAddress = event.params.investor;
   entity.assetDeposited = event.params.assetDeposited;
-  entity.valueDeposited = event.params.valueDeposited;
   entity.fundTokensReceived = convertTokenToDecimal(event.params.fundTokensReceived, poolTokenDecimals);
   entity.totalInvestorFundTokens = convertTokenToDecimal(event.params.totalInvestorFundTokens, poolTokenDecimals);
-  entity.fundValue = event.params.fundValue;
+  entity.valueDepositedUsd = convertTokenToDecimal(event.params.valueDeposited, BI_18);
+  entity.fundValueUsd = convertTokenToDecimal(event.params.fundValue, BI_18);
   entity.time = event.params.time;
   entity.block = event.block.number.toI32()
   entity.save();
@@ -217,10 +231,16 @@ export function handleWithdrawal(event: WithdrawalEvent): void {
   entity.fundAddress = event.params.fundAddress;
   entity.totalSupply = convertTokenToDecimal(poolContract.totalSupply(), poolTokenDecimals);
   entity.investor = event.params.investor;
-  entity.valueWithdrawn = event.params.valueWithdrawn;
   entity.fundTokensWithdrawn = convertTokenToDecimal(event.params.fundTokensWithdrawn, poolTokenDecimals);
   entity.totalInvestorFundTokens = convertTokenToDecimal(event.params.totalInvestorFundTokens, poolTokenDecimals);
-  entity.fundValue = event.params.fundValue;
+  
+  
+  // entity.valueDepositedUsd = convertTokenToDecimal(event.params.valueDeposited, BI_18);
+  
+  entity.fundValueUsd = convertTokenToDecimal(event.params.fundValue, BI_18);
+  entity.valueWithdrawnUsd = convertTokenToDecimal(event.params.valueWithdrawn, BI_18);
+
+
   entity.time = event.params.time;
   entity.block = event.block.number.toI32();
   entity.save();

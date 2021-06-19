@@ -648,6 +648,24 @@ export class Deposit extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get pool(): string {
+    let value = this.get("pool");
+    return value.toString();
+  }
+
+  set pool(value: string) {
+    this.set("pool", Value.fromString(value));
+  }
+
+  get investor(): string {
+    let value = this.get("investor");
+    return value.toString();
+  }
+
+  set investor(value: string) {
+    this.set("investor", Value.fromString(value));
+  }
+
   get fundAddress(): Bytes {
     let value = this.get("fundAddress");
     return value.toBytes();
@@ -657,15 +675,6 @@ export class Deposit extends Entity {
     this.set("fundAddress", Value.fromBytes(value));
   }
 
-  get investor(): Bytes {
-    let value = this.get("investor");
-    return value.toBytes();
-  }
-
-  set investor(value: Bytes) {
-    this.set("investor", Value.fromBytes(value));
-  }
-
   get assetDeposited(): Bytes {
     let value = this.get("assetDeposited");
     return value.toBytes();
@@ -673,15 +682,6 @@ export class Deposit extends Entity {
 
   set assetDeposited(value: Bytes) {
     this.set("assetDeposited", Value.fromBytes(value));
-  }
-
-  get valueDeposited(): BigInt {
-    let value = this.get("valueDeposited");
-    return value.toBigInt();
-  }
-
-  set valueDeposited(value: BigInt) {
-    this.set("valueDeposited", Value.fromBigInt(value));
   }
 
   get fundTokensReceived(): BigDecimal {
@@ -702,13 +702,22 @@ export class Deposit extends Entity {
     this.set("totalInvestorFundTokens", Value.fromBigDecimal(value));
   }
 
-  get fundValue(): BigInt {
-    let value = this.get("fundValue");
-    return value.toBigInt();
+  get valueDepositedUsd(): BigDecimal {
+    let value = this.get("valueDepositedUsd");
+    return value.toBigDecimal();
   }
 
-  set fundValue(value: BigInt) {
-    this.set("fundValue", Value.fromBigInt(value));
+  set valueDepositedUsd(value: BigDecimal) {
+    this.set("valueDepositedUsd", Value.fromBigDecimal(value));
+  }
+
+  get fundValueUsd(): BigDecimal {
+    let value = this.get("fundValueUsd");
+    return value.toBigDecimal();
+  }
+
+  set fundValueUsd(value: BigDecimal) {
+    this.set("fundValueUsd", Value.fromBigDecimal(value));
   }
 
   get totalSupply(): BigDecimal {
@@ -738,13 +747,13 @@ export class Deposit extends Entity {
     this.set("block", Value.fromI32(value));
   }
 
-  get pool(): string {
-    let value = this.get("pool");
-    return value.toString();
+  get investorAddress(): Bytes {
+    let value = this.get("investorAddress");
+    return value.toBytes();
   }
 
-  set pool(value: string) {
-    this.set("pool", Value.fromString(value));
+  set investorAddress(value: Bytes) {
+    this.set("investorAddress", Value.fromBytes(value));
   }
 }
 
@@ -1077,13 +1086,13 @@ export class Withdrawal extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get fundAddress(): Bytes {
-    let value = this.get("fundAddress");
-    return value.toBytes();
+  get pool(): string {
+    let value = this.get("pool");
+    return value.toString();
   }
 
-  set fundAddress(value: Bytes) {
-    this.set("fundAddress", Value.fromBytes(value));
+  set pool(value: string) {
+    this.set("pool", Value.fromString(value));
   }
 
   get investor(): Bytes {
@@ -1095,13 +1104,13 @@ export class Withdrawal extends Entity {
     this.set("investor", Value.fromBytes(value));
   }
 
-  get valueWithdrawn(): BigInt {
-    let value = this.get("valueWithdrawn");
-    return value.toBigInt();
+  get fundAddress(): Bytes {
+    let value = this.get("fundAddress");
+    return value.toBytes();
   }
 
-  set valueWithdrawn(value: BigInt) {
-    this.set("valueWithdrawn", Value.fromBigInt(value));
+  set fundAddress(value: Bytes) {
+    this.set("fundAddress", Value.fromBytes(value));
   }
 
   get fundTokensWithdrawn(): BigDecimal {
@@ -1122,13 +1131,22 @@ export class Withdrawal extends Entity {
     this.set("totalInvestorFundTokens", Value.fromBigDecimal(value));
   }
 
-  get fundValue(): BigInt {
-    let value = this.get("fundValue");
-    return value.toBigInt();
+  get fundValueUsd(): BigDecimal {
+    let value = this.get("fundValueUsd");
+    return value.toBigDecimal();
   }
 
-  set fundValue(value: BigInt) {
-    this.set("fundValue", Value.fromBigInt(value));
+  set fundValueUsd(value: BigDecimal) {
+    this.set("fundValueUsd", Value.fromBigDecimal(value));
+  }
+
+  get valueWithdrawnUsd(): BigDecimal {
+    let value = this.get("valueWithdrawnUsd");
+    return value.toBigDecimal();
+  }
+
+  set valueWithdrawnUsd(value: BigDecimal) {
+    this.set("valueWithdrawnUsd", Value.fromBigDecimal(value));
   }
 
   get totalSupply(): BigDecimal {
@@ -1156,15 +1174,6 @@ export class Withdrawal extends Entity {
 
   set block(value: i32) {
     this.set("block", Value.fromI32(value));
-  }
-
-  get pool(): string {
-    let value = this.get("pool");
-    return value.toString();
-  }
-
-  set pool(value: string) {
-    this.set("pool", Value.fromString(value));
   }
 }
 
@@ -1447,5 +1456,45 @@ export class Asset extends Entity {
 
   set decimals(value: BigInt) {
     this.set("decimals", Value.fromBigInt(value));
+  }
+}
+
+export class Investor extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Investor entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Investor entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Investor", id.toString(), this);
+  }
+
+  static load(id: string): Investor | null {
+    return store.get("Investor", id) as Investor | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get deposits(): Array<string> {
+    let value = this.get("deposits");
+    return value.toStringArray();
+  }
+
+  set deposits(value: Array<string>) {
+    this.set("deposits", Value.fromStringArray(value));
   }
 }

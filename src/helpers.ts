@@ -1,10 +1,10 @@
-import { log, Address, BigInt, BigDecimal } from '@graphprotocol/graph-ts';
-
+import { log, Address, BigInt, BigDecimal, ethereum } from '@graphprotocol/graph-ts';
 import { ERC20 } from '../generated/PoolFactory/ERC20';
 import { ERC20NameBytes } from '../generated/PoolFactory/ERC20NameBytes';
 
 export let ZERO_BI = BigInt.fromI32(0)
 export let ONE_BI = BigInt.fromI32(1)
+export let TWO_BI = BigInt.fromI32(2)
 export let ZERO_BD = BigDecimal.fromString('0')
 export let BI_18 = BigInt.fromI32(18)
 

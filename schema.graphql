@@ -73,17 +73,18 @@ type Approval @entity {
 
 type Deposit @entity {
   id: ID!
+  pool: Pool!
+  investor: Investor!
   fundAddress: Bytes!
-  investor: Bytes!
   assetDeposited: Bytes!
-  valueDeposited: BigInt!
   fundTokensReceived: BigDecimal!
   totalInvestorFundTokens: BigDecimal!
-  fundValue: BigInt!
+  valueDepositedUsd: BigDecimal!
+  fundValueUsd: BigDecimal!
   totalSupply: BigDecimal!
   time: BigInt!
   block: Int!
-  pool: Pool!
+  investorAddress: Bytes!
 }
 
 type ManagerFeeMinted @entity {
@@ -124,16 +125,16 @@ type Transfer @entity {
 
 type Withdrawal @entity {
   id: ID!
-  fundAddress: Bytes!
+  pool: Pool!
   investor: Bytes!
-  valueWithdrawn: BigInt!
+  fundAddress: Bytes!
   fundTokensWithdrawn: BigDecimal!
   totalInvestorFundTokens: BigDecimal!
-  fundValue: BigInt!
+  fundValueUsd: BigDecimal!
+  valueWithdrawnUsd: BigDecimal!
   totalSupply: BigDecimal!
   time: BigInt!
   block: Int!
-  pool: Pool!
 }
 
 type Exchange @entity {
@@ -148,10 +149,10 @@ type Exchange @entity {
 
 type Pool @entity {
   id: ID!
-  fundAddress: Bytes! # address
-  name: String! # string
-  manager: Bytes! # uint256
-  managerName: String! # string`
+  fundAddress: Bytes!
+  name: String!
+  manager: Bytes!
+  managerName: String!
   totalSupply: BigDecimal!
   deposits: [Deposit!]! @derivedFrom(field: "pool")
   withdrawals: [Withdrawal!]! @derivedFrom(field: "pool")
@@ -162,10 +163,15 @@ type Pool @entity {
 type Asset @entity {
   id: ID!
   pool: Pool!
-  timestamp: Int! # saved for fast historical lookups
-  block: Int! # saved for fast historical lookups
+  timestamp: Int!
+  block: Int!
   name: String!
   balance: BigDecimal!
   decimals: BigInt!
   # value: BigInt! # cant use in Exchange entity..
+}
+
+type Investor @entity {
+  id: ID! # Investor address
+  deposits: [Deposit!]! @derivedFrom(field: "investor")
 }
