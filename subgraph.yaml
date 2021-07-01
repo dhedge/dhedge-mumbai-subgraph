@@ -8,7 +8,7 @@ dataSources:
     source:
       address: '0xeec15f2716c7a98fFe14F7aD0dEeC93962aF4437'
       abi: PoolFactory
-      startBlock: 14370216
+      startBlock: 15178590
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -62,7 +62,7 @@ dataSources:
     source:
       address: '0xF1f310360736133A57c193263A1500EA5B77a697'
       abi: UniswapV2RouterGuard
-      startBlock: 14370226
+      startBlock: 15178603
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
