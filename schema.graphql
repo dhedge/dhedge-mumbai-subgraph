@@ -77,11 +77,12 @@ type Deposit @entity {
   investor: Bytes!
   assetDeposited: Bytes!
   valueDeposited: BigInt!
-  fundTokensReceived: BigInt!
-  totalInvestorFundTokens: BigInt!
+  fundTokensReceived: BigDecimal!
+  totalInvestorFundTokens: BigDecimal!
   fundValue: BigInt!
-  totalSupply: BigInt!
+  totalSupply: BigDecimal!
   time: BigInt!
+  block: Int!
   pool: Pool!
 }
 

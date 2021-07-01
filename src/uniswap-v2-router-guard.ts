@@ -19,8 +19,6 @@ export function handleExchange(event: ExchangeEvent): void {
     event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   );
   // PoolLogic
-  let poolTokenDecimals = fetchTokenDecimals(event.params.fundAddress);
-
   let pool = Pool.load(event.params.fundAddress.toHexString());
   let poolTokenDecimals = fetchTokenDecimals(event.address);
 
