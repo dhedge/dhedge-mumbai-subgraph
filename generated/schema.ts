@@ -1386,13 +1386,21 @@ export class Pool extends Entity {
     this.set("name", Value.fromString(value));
   }
 
-  get manager(): Bytes {
+  get manager(): Bytes | null {
     let value = this.get("manager");
-    return value.toBytes();
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
   }
 
-  set manager(value: Bytes) {
-    this.set("manager", Value.fromBytes(value));
+  set manager(value: Bytes | null) {
+    if (value === null) {
+      this.unset("manager");
+    } else {
+      this.set("manager", Value.fromBytes(value as Bytes));
+    }
   }
 
   get managerName(): string {

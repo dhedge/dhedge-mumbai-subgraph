@@ -49,13 +49,7 @@ export function handleDeposit(event: DepositEvent): void {
 
   let id = dataSource.address().toHexString();
   let poolTokenDecimals = fetchTokenDecimals(event.address);
-
-  let pool = Pool.load(id);
-  if (!pool) {
-    pool = new Pool(id);
-    pool.fundAddress = event.params.fundAddress;
-  }
-
+  
   // Manager Logic
   let poolContract = PoolLogic.bind(event.address);
   let managerAddress = poolContract.poolManagerLogic();
