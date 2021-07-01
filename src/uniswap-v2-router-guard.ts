@@ -21,6 +21,8 @@ export function handleExchange(event: ExchangeEvent): void {
 
   // PoolLogic
   let pool = Pool.load(event.params.fundAddress.toHexString());
+  let poolTokenDecimals = fetchTokenDecimals(event.address);
+
   if (!pool) {
     pool = new Pool(event.params.fundAddress.toHexString());
     pool.fundAddress = event.params.fundAddress;
@@ -55,7 +57,7 @@ export function handleExchange(event: ExchangeEvent): void {
   let currentFormattedBalance = convertTokenToDecimal(erc20Contract.balanceOf(fundAddress), asset0Decimals);
   let timestamp0 = event.block.timestamp.toI32()
 
-  asset0.timestamp = timestamp0
+  asset0.time = timestamp0
   asset0.block = event.block.number.toI32()
   asset0.name = fetchTokenName(event.params.dstAsset)
   asset0.balance = currentFormattedBalance; 
@@ -74,7 +76,7 @@ export function handleExchange(event: ExchangeEvent): void {
   let currentFormattedBalanceB = convertTokenToDecimal(erc20ContractB.balanceOf(fundAddress), asset1Decimals);
   let timestampAsset1 = event.block.timestamp.toI32() 
 
-  asset1.timestamp = timestampAsset1 
+  asset1.time = timestampAsset1 
   asset1.block = event.block.number.toI32()
   asset1.name = fetchTokenName(event.params.sourceAsset)
   asset1.balance = currentFormattedBalanceB; 
@@ -93,7 +95,7 @@ export function handleExchange(event: ExchangeEvent): void {
   let poolName = tryPoolName.value;
   pool.name = poolName;
   pool.managerName = poolContract.managerName();
-  pool.totalSupply = poolContract.totalSupply();
+  pool.totalSupply = convertTokenToDecimal(poolContract.totalSupply(), poolTokenDecimals);
   pool.save();
 
   // Exchange Entity

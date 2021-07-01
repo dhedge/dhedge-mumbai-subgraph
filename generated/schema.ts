@@ -1095,22 +1095,22 @@ export class Withdrawal extends Entity {
     this.set("valueWithdrawn", Value.fromBigInt(value));
   }
 
-  get fundTokensWithdrawn(): BigInt {
+  get fundTokensWithdrawn(): BigDecimal {
     let value = this.get("fundTokensWithdrawn");
-    return value.toBigInt();
+    return value.toBigDecimal();
   }
 
-  set fundTokensWithdrawn(value: BigInt) {
-    this.set("fundTokensWithdrawn", Value.fromBigInt(value));
+  set fundTokensWithdrawn(value: BigDecimal) {
+    this.set("fundTokensWithdrawn", Value.fromBigDecimal(value));
   }
 
-  get totalInvestorFundTokens(): BigInt {
+  get totalInvestorFundTokens(): BigDecimal {
     let value = this.get("totalInvestorFundTokens");
-    return value.toBigInt();
+    return value.toBigDecimal();
   }
 
-  set totalInvestorFundTokens(value: BigInt) {
-    this.set("totalInvestorFundTokens", Value.fromBigInt(value));
+  set totalInvestorFundTokens(value: BigDecimal) {
+    this.set("totalInvestorFundTokens", Value.fromBigDecimal(value));
   }
 
   get fundValue(): BigInt {
@@ -1122,13 +1122,13 @@ export class Withdrawal extends Entity {
     this.set("fundValue", Value.fromBigInt(value));
   }
 
-  get totalSupply(): BigInt {
+  get totalSupply(): BigDecimal {
     let value = this.get("totalSupply");
-    return value.toBigInt();
+    return value.toBigDecimal();
   }
 
-  set totalSupply(value: BigInt) {
-    this.set("totalSupply", Value.fromBigInt(value));
+  set totalSupply(value: BigDecimal) {
+    this.set("totalSupply", Value.fromBigDecimal(value));
   }
 
   get time(): BigInt {
@@ -1140,6 +1140,15 @@ export class Withdrawal extends Entity {
     this.set("time", Value.fromBigInt(value));
   }
 
+  get block(): i32 {
+    let value = this.get("block");
+    return value.toI32();
+  }
+
+  set block(value: i32) {
+    this.set("block", Value.fromI32(value));
+  }
+
   get pool(): string {
     let value = this.get("pool");
     return value.toString();
@@ -1147,6 +1156,91 @@ export class Withdrawal extends Entity {
 
   set pool(value: string) {
     this.set("pool", Value.fromString(value));
+  }
+
+  get assetsWithdrawn(): Array<string> {
+    let value = this.get("assetsWithdrawn");
+    return value.toStringArray();
+  }
+
+  set assetsWithdrawn(value: Array<string>) {
+    this.set("assetsWithdrawn", Value.fromStringArray(value));
+  }
+}
+
+export class AssetsWithdrawn extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save AssetsWithdrawn entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save AssetsWithdrawn entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("AssetsWithdrawn", id.toString(), this);
+  }
+
+  static load(id: string): AssetsWithdrawn | null {
+    return store.get("AssetsWithdrawn", id) as AssetsWithdrawn | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get asset(): Bytes {
+    let value = this.get("asset");
+    return value.toBytes();
+  }
+
+  set asset(value: Bytes) {
+    this.set("asset", Value.fromBytes(value));
+  }
+
+  get name(): string {
+    let value = this.get("name");
+    return value.toString();
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
+
+  get amount(): BigDecimal {
+    let value = this.get("amount");
+    return value.toBigDecimal();
+  }
+
+  set amount(value: BigDecimal) {
+    this.set("amount", Value.fromBigDecimal(value));
+  }
+
+  get withdrawProcessed(): boolean {
+    let value = this.get("withdrawProcessed");
+    return value.toBoolean();
+  }
+
+  set withdrawProcessed(value: boolean) {
+    this.set("withdrawProcessed", Value.fromBoolean(value));
+  }
+
+  get withdrawal(): string {
+    let value = this.get("withdrawal");
+    return value.toString();
+  }
+
+  set withdrawal(value: string) {
+    this.set("withdrawal", Value.fromString(value));
   }
 }
 
@@ -1309,13 +1403,13 @@ export class Pool extends Entity {
     this.set("managerName", Value.fromString(value));
   }
 
-  get totalSupply(): BigInt {
+  get totalSupply(): BigDecimal {
     let value = this.get("totalSupply");
-    return value.toBigInt();
+    return value.toBigDecimal();
   }
 
-  set totalSupply(value: BigInt) {
-    this.set("totalSupply", Value.fromBigInt(value));
+  set totalSupply(value: BigDecimal) {
+    this.set("totalSupply", Value.fromBigDecimal(value));
   }
 
   get deposits(): Array<string> {
@@ -1394,13 +1488,13 @@ export class Asset extends Entity {
     this.set("pool", Value.fromString(value));
   }
 
-  get timestamp(): i32 {
-    let value = this.get("timestamp");
+  get time(): i32 {
+    let value = this.get("time");
     return value.toI32();
   }
 
-  set timestamp(value: i32) {
-    this.set("timestamp", Value.fromI32(value));
+  set time(value: i32) {
+    this.set("time", Value.fromI32(value));
   }
 
   get block(): i32 {
