@@ -210,11 +210,31 @@
   },
   {
     "inputs": [
-      { "internalType": "bool", "name": "_privatePool", "type": "bool" },
-      { "internalType": "address", "name": "_manager", "type": "address" },
-      { "internalType": "string", "name": "_managerName", "type": "string" },
-      { "internalType": "string", "name": "_fundName", "type": "string" },
-      { "internalType": "string", "name": "_fundSymbol", "type": "string" },
+      {
+        "internalType": "bool",
+        "name": "_privatePool",
+        "type": "bool"
+      },
+      {
+        "internalType": "address",
+        "name": "_manager",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_managerName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_fundName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_fundSymbol",
+        "type": "string"
+      },
       {
         "internalType": "uint256",
         "name": "_managerFeeNumerator",
@@ -222,63 +242,137 @@
       },
       {
         "components": [
-          { "internalType": "address", "name": "asset", "type": "address" },
-          { "internalType": "bool", "name": "isDeposit", "type": "bool" }
+          {
+            "internalType": "address",
+            "name": "asset",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isDeposit",
+            "type": "bool"
+          }
         ],
-        "internalType": "struct IPoolManagerLogic.Asset[]",
+        "internalType": "struct IHasSupportedAsset.Asset[]",
         "name": "_supportedAssets",
         "type": "tuple[]"
       }
     ],
     "name": "createFund",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "bytes", "name": "_data", "type": "bytes" },
-      { "internalType": "uint8", "name": "_proxyType", "type": "uint8" }
+      {
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_proxyType",
+        "type": "uint8"
+      }
     ],
     "name": "deploy",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "name": "deployedFunds",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "deployedFundsLength",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "getAssetHandler",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "asset", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "asset",
+        "type": "address"
+      }
     ],
     "name": "getAssetPrice",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "asset",
+        "type": "address"
+      }
+    ],
+    "name": "getAssetType",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "getDaoAddress",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -286,8 +380,29 @@
     "inputs": [],
     "name": "getDaoFee",
     "outputs": [
-      { "internalType": "uint256", "name": "", "type": "uint256" },
-      { "internalType": "uint256", "name": "", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getDeployedFunds",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -295,32 +410,64 @@
   {
     "inputs": [],
     "name": "getExitCooldown",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "extContract", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "extContract",
+        "type": "address"
+      }
     ],
     "name": "getGuard",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint8", "name": "_proxyType", "type": "uint8" }
+      {
+        "internalType": "uint8",
+        "name": "_proxyType",
+        "type": "uint8"
+      }
     ],
     "name": "getLogic",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "getManagerFeeNumeratorChangeDelay",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -328,8 +475,16 @@
     "inputs": [],
     "name": "getMaximumManagerFee",
     "outputs": [
-      { "internalType": "uint256", "name": "", "type": "uint256" },
-      { "internalType": "uint256", "name": "", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -337,25 +492,49 @@
   {
     "inputs": [],
     "name": "getMaximumManagerFeeNumeratorChange",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "getMaximumSupportedAssetCount",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "pool", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "pool",
+        "type": "address"
+      }
     ],
     "name": "getPoolManagerFee",
     "outputs": [
-      { "internalType": "uint256", "name": "", "type": "uint256" },
-      { "internalType": "uint256", "name": "", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -363,16 +542,38 @@
   {
     "inputs": [],
     "name": "getTrackingCode",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "_poolLogic", "type": "address" },
-      { "internalType": "address", "name": "_managerLogic", "type": "address" },
-      { "internalType": "address", "name": "assetHandler", "type": "address" },
-      { "internalType": "address", "name": "daoAddress", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_poolLogic",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_managerLogic",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "assetHandler",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "daoAddress",
+        "type": "address"
+      }
     ],
     "name": "initialize",
     "outputs": [],
@@ -382,51 +583,109 @@
   {
     "inputs": [],
     "name": "isPaused",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "isPool",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "isPoolManager",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "asset", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "isPool",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "isPoolManager",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "asset",
+        "type": "address"
+      }
     ],
     "name": "isValidAsset",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "managerFeeNumeratorChangeDelay",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "maximumManagerFeeNumeratorChange",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -440,35 +699,83 @@
   {
     "inputs": [],
     "name": "paused",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "name": "poolManagerFeeDenominator",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "name": "poolManagerFeeNumerator",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "poolStorageVersion",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "name": "poolVersion",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -481,8 +788,16 @@
   },
   {
     "inputs": [
-      { "internalType": "uint8", "name": "assetType", "type": "uint8" },
-      { "internalType": "address", "name": "guardAddress", "type": "address" }
+      {
+        "internalType": "uint8",
+        "name": "assetType",
+        "type": "uint8"
+      },
+      {
+        "internalType": "address",
+        "name": "guardAddress",
+        "type": "address"
+      }
     ],
     "name": "setAssetGuard",
     "outputs": [],
@@ -491,7 +806,11 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "assetHandler", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "assetHandler",
+        "type": "address"
+      }
     ],
     "name": "setAssetHandler",
     "outputs": [],
@@ -500,8 +819,16 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "extContract", "type": "address" },
-      { "internalType": "address", "name": "guardAddress", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "extContract",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "guardAddress",
+        "type": "address"
+      }
     ],
     "name": "setContractGuard",
     "outputs": [],
@@ -510,7 +837,11 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "daoAddress", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "daoAddress",
+        "type": "address"
+      }
     ],
     "name": "setDaoAddress",
     "outputs": [],
@@ -519,8 +850,16 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "numerator", "type": "uint256" },
-      { "internalType": "uint256", "name": "denominator", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "numerator",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "denominator",
+        "type": "uint256"
+      }
     ],
     "name": "setDaoFee",
     "outputs": [],
@@ -529,7 +868,11 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "cooldown", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "cooldown",
+        "type": "uint256"
+      }
     ],
     "name": "setExitCooldown",
     "outputs": [],
@@ -538,7 +881,11 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "_poolLogic", "type": "address" },
+      {
+        "internalType": "address",
+        "name": "_poolLogic",
+        "type": "address"
+      },
       {
         "internalType": "address",
         "name": "_poolManagerLogic",
@@ -552,7 +899,11 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "delay", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "delay",
+        "type": "uint256"
+      }
     ],
     "name": "setManagerFeeNumeratorChangeDelay",
     "outputs": [],
@@ -561,7 +912,11 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "amount", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
     ],
     "name": "setMaximumManagerFeeNumeratorChange",
     "outputs": [],
@@ -570,7 +925,11 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "count", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "count",
+        "type": "uint256"
+      }
     ],
     "name": "setMaximumSupportedAssetCount",
     "outputs": [],
@@ -579,8 +938,16 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "pool", "type": "address" },
-      { "internalType": "uint256", "name": "numerator", "type": "uint256" }
+      {
+        "internalType": "address",
+        "name": "pool",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "numerator",
+        "type": "uint256"
+      }
     ],
     "name": "setPoolManagerFeeNumerator",
     "outputs": [],
@@ -589,7 +956,11 @@
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "code", "type": "bytes32" }
+      {
+        "internalType": "bytes32",
+        "name": "code",
+        "type": "bytes32"
+      }
     ],
     "name": "setTrackingCode",
     "outputs": [],
@@ -598,7 +969,11 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "newOwner", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
     ],
     "name": "transferOwnership",
     "outputs": [],
@@ -614,11 +989,31 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "startIndex", "type": "uint256" },
-      { "internalType": "uint256", "name": "endIndex", "type": "uint256" },
-      { "internalType": "uint256", "name": "sourceVersion", "type": "uint256" },
-      { "internalType": "uint256", "name": "targetVersion", "type": "uint256" },
-      { "internalType": "bytes", "name": "data", "type": "bytes" }
+      {
+        "internalType": "uint256",
+        "name": "startIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "endIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "sourceVersion",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "targetVersion",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
     ],
     "name": "upgradePoolBatch",
     "outputs": [],
