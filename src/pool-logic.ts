@@ -61,15 +61,21 @@ export function handleDeposit(event: DepositEvent): void {
   let managerAddress = poolContract.poolManagerLogic();
   let managerContract = PoolManagerLogic.bind(managerAddress);
   
-  let tryAssetBalance = managerContract.try_assetBalance(event.params.assetDeposited);
-  if (tryAssetBalance.reverted) {
-    log.info(
-      'assetBalance was reverted in tx hash {} at block number: {}',
-      [event.transaction.hash.toHex(), event.block.number.toString()]
-    );
-    return;
+  let pool = Pool.load(id);
+  if (!pool) {
+    pool = new Pool(id);
+    pool.fundAddress = event.params.fundAddress;
   }
-  let assetValue = managerContract.assetValue(event.params.assetDeposited, event.params.valueDeposited);
+
+  // let tryAssetBalance = managerContract.try_assetBalance(event.params.assetDeposited);
+  // if (tryAssetBalance.reverted) {
+  //   log.info(
+  //     'assetBalance was reverted in tx hash {} at block number: {}',
+  //     [event.transaction.hash.toHex(), event.block.number.toString()]
+  //   );
+  //   return;
+  // }
+  // let assetValue = managerContract.assetValue(event.params.assetDeposited, event.params.valueDeposited);
   
   // Create or Load Asset entity
   let asset = Asset.load(event.address.toHexString() + "-" + event.params.assetDeposited.toHexString());
@@ -93,8 +99,18 @@ export function handleDeposit(event: DepositEvent): void {
   asset.save();
 
   // Pool Entity
+  let tryPoolName = poolContract.try_name()
+  if (tryPoolName.reverted) {
+    log.info(
+      'pool name was reverted in tx hash: {} at blockNumber: {}', 
+      [event.transaction.hash.toHex(), event.block.number.toString()]
+    );
+    return;
+  }
+  let poolName = tryPoolName.value;
+  pool.name = poolName;
   pool.manager = managerAddress
-  pool.name = poolContract.name();
+  pool.manager = managerContract.manager();
   pool.managerName = poolContract.managerName();
   pool.totalSupply = convertTokenToDecimal(poolContract.totalSupply(), poolTokenDecimals);
   pool.save();
@@ -102,14 +118,15 @@ export function handleDeposit(event: DepositEvent): void {
   // Deposit Entity
   entity.pool = pool.id;
   entity.fundAddress = event.params.fundAddress;
-  entity.totalSupply = poolContract.totalSupply();
+  entity.totalSupply = convertTokenToDecimal(poolContract.totalSupply(), poolTokenDecimals);
   entity.investor = event.params.investor;
   entity.assetDeposited = event.params.assetDeposited;
   entity.valueDeposited = event.params.valueDeposited;
-  entity.fundTokensReceived = event.params.fundTokensReceived;
-  entity.totalInvestorFundTokens = event.params.totalInvestorFundTokens;
+  entity.fundTokensReceived = convertTokenToDecimal(event.params.fundTokensReceived, poolTokenDecimals);
+  entity.totalInvestorFundTokens = convertTokenToDecimal(event.params.totalInvestorFundTokens, poolTokenDecimals);
   entity.fundValue = event.params.fundValue;
   entity.time = event.params.time;
+  entity.block = event.block.number.toI32()
   entity.save();
 }
 
@@ -199,9 +216,10 @@ export function handleWithdrawal(event: WithdrawalEvent): void {
   pool.name = poolName;
   pool.manager = managerContract.manager();
   pool.managerName = poolContract.managerName();
-
+  
   let poolSupply = convertTokenToDecimal(poolContract.totalSupply(), poolTokenDecimals);
   pool.totalSupply = poolSupply;
+
   pool.save();
 
   let withdrawnAssetsTuple = event.params.withdrawnAssets as Array<WithdrawalWithdrawnAssetsStruct>;

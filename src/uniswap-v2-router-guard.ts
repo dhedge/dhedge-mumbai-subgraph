@@ -18,8 +18,9 @@ export function handleExchange(event: ExchangeEvent): void {
   let entity = new Exchange(
     event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   );
-
   // PoolLogic
+  let poolTokenDecimals = fetchTokenDecimals(event.params.fundAddress);
+
   let pool = Pool.load(event.params.fundAddress.toHexString());
   let poolTokenDecimals = fetchTokenDecimals(event.address);
 
@@ -30,7 +31,6 @@ export function handleExchange(event: ExchangeEvent): void {
 
   // Manager Logic
   let poolContract = PoolLogic.bind(event.params.fundAddress);
-  // or let poolContract = PoolLogic.bind(event.address);
   let managerAddress = poolContract.poolManagerLogic();
   let managerContract = PoolManagerLogic.bind(managerAddress);
 
@@ -94,6 +94,7 @@ export function handleExchange(event: ExchangeEvent): void {
   }
   let poolName = tryPoolName.value;
   pool.name = poolName;
+  pool.manager = managerContract.manager();
   pool.managerName = poolContract.managerName();
   pool.totalSupply = convertTokenToDecimal(poolContract.totalSupply(), poolTokenDecimals);
   pool.save();
