@@ -406,23 +406,34 @@ export class UniswapV2RouterGuard extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
-  txGuard(_poolManagerLogic: Address, data: Bytes): i32 {
-    let result = super.call("txGuard", "txGuard(address,bytes):(uint8)", [
-      ethereum.Value.fromAddress(_poolManagerLogic),
-      ethereum.Value.fromBytes(data)
-    ]);
+  txGuard(_poolManagerLogic: Address, param1: Address, data: Bytes): i32 {
+    let result = super.call(
+      "txGuard",
+      "txGuard(address,address,bytes):(uint8)",
+      [
+        ethereum.Value.fromAddress(_poolManagerLogic),
+        ethereum.Value.fromAddress(param1),
+        ethereum.Value.fromBytes(data)
+      ]
+    );
 
     return result[0].toI32();
   }
 
   try_txGuard(
     _poolManagerLogic: Address,
+    param1: Address,
     data: Bytes
   ): ethereum.CallResult<i32> {
-    let result = super.tryCall("txGuard", "txGuard(address,bytes):(uint8)", [
-      ethereum.Value.fromAddress(_poolManagerLogic),
-      ethereum.Value.fromBytes(data)
-    ]);
+    let result = super.tryCall(
+      "txGuard",
+      "txGuard(address,address,bytes):(uint8)",
+      [
+        ethereum.Value.fromAddress(_poolManagerLogic),
+        ethereum.Value.fromAddress(param1),
+        ethereum.Value.fromBytes(data)
+      ]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -482,8 +493,12 @@ export class TxGuardCall__Inputs {
     return this._call.inputValues[0].value.toAddress();
   }
 
+  get value1(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
   get data(): Bytes {
-    return this._call.inputValues[1].value.toBytes();
+    return this._call.inputValues[2].value.toBytes();
   }
 }
 

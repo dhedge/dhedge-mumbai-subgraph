@@ -1166,6 +1166,91 @@ export class Withdrawal extends Entity {
   set pool(value: string) {
     this.set("pool", Value.fromString(value));
   }
+
+  get assetsWithdrawn(): Array<string> {
+    let value = this.get("assetsWithdrawn");
+    return value.toStringArray();
+  }
+
+  set assetsWithdrawn(value: Array<string>) {
+    this.set("assetsWithdrawn", Value.fromStringArray(value));
+  }
+}
+
+export class AssetsWithdrawn extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save AssetsWithdrawn entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save AssetsWithdrawn entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("AssetsWithdrawn", id.toString(), this);
+  }
+
+  static load(id: string): AssetsWithdrawn | null {
+    return store.get("AssetsWithdrawn", id) as AssetsWithdrawn | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get asset(): Bytes {
+    let value = this.get("asset");
+    return value.toBytes();
+  }
+
+  set asset(value: Bytes) {
+    this.set("asset", Value.fromBytes(value));
+  }
+
+  get name(): string {
+    let value = this.get("name");
+    return value.toString();
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
+
+  get amount(): BigDecimal {
+    let value = this.get("amount");
+    return value.toBigDecimal();
+  }
+
+  set amount(value: BigDecimal) {
+    this.set("amount", Value.fromBigDecimal(value));
+  }
+
+  get withdrawProcessed(): boolean {
+    let value = this.get("withdrawProcessed");
+    return value.toBoolean();
+  }
+
+  set withdrawProcessed(value: boolean) {
+    this.set("withdrawProcessed", Value.fromBoolean(value));
+  }
+
+  get withdrawal(): string {
+    let value = this.get("withdrawal");
+    return value.toString();
+  }
+
+  set withdrawal(value: string) {
+    this.set("withdrawal", Value.fromString(value));
+  }
 }
 
 export class Exchange extends Entity {
@@ -1404,13 +1489,13 @@ export class Asset extends Entity {
     this.set("pool", Value.fromString(value));
   }
 
-  get timestamp(): i32 {
-    let value = this.get("timestamp");
+  get time(): i32 {
+    let value = this.get("time");
     return value.toI32();
   }
 
-  set timestamp(value: i32) {
-    this.set("timestamp", Value.fromI32(value));
+  set time(value: i32) {
+    this.set("time", Value.fromI32(value));
   }
 
   get block(): i32 {

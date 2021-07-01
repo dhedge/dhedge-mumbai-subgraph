@@ -1,74 +1,74 @@
 type DaoAddressSet @entity {
   id: ID!
-  dao: Bytes! # address
+  dao: Bytes!
 }
 
 type DaoFeeSet @entity {
   id: ID!
-  numerator: BigInt! # uint256
-  denominator: BigInt! # uint256
+  numerator: BigInt!
+  denominator: BigInt!
 }
 
 type ExitCooldownSet @entity {
   id: ID!
-  cooldown: BigInt! # uint256
+  cooldown: BigInt!
 }
 
 type ExitFeeSet @entity {
   id: ID!
-  numerator: BigInt! # uint256
-  denominator: BigInt! # uint256
+  numerator: BigInt!
+  denominator: BigInt!
 }
 
 type FundCreated @entity {
   id: ID!
-  fundAddress: Bytes! # address
-  isPoolPrivate: Boolean! # bool
-  fundName: String! # string
-  managerName: String! # string
-  manager: Bytes! # address
-  time: BigInt! # uint256
-  managerFeeNumerator: BigInt! # uint256
-  managerFeeDenominator: BigInt! # uint256
+  fundAddress: Bytes!
+  isPoolPrivate: Boolean!
+  fundName: String!
+  managerName: String!
+  manager: Bytes!
+  time: BigInt!
+  managerFeeNumerator: BigInt!
+  managerFeeDenominator: BigInt!
 }
 
 type LogUpgrade @entity {
   id: ID!
-  manager: Bytes! # address
-  pool: Bytes! # address
+  manager: Bytes!
+  pool: Bytes!
 }
 
 type MaximumSupportedAssetCountSet @entity {
   id: ID!
-  count: BigInt! # uint256
+  count: BigInt!
 }
 
 type OwnershipTransferred @entity {
   id: ID!
-  previousOwner: Bytes! # address
-  newOwner: Bytes! # address
+  previousOwner: Bytes!
+  newOwner: Bytes!
 }
 
 type Paused @entity {
   id: ID!
-  account: Bytes! # address
+  account: Bytes!
 }
 
 type ProxyCreated @entity {
   id: ID!
-  proxy: Bytes! # address
+  proxy: Bytes!
 }
 
 type Unpaused @entity {
   id: ID!
-  account: Bytes! # address
+  account: Bytes!
 }
 
 type Approval @entity {
   id: ID!
-  owner: Bytes! # address
-  spender: Bytes! # address
-  value: BigInt! # uint256
+  owner: Bytes!
+  spender: Bytes!
+  value: BigInt!
 }
 
 type Deposit @entity {
@@ -77,49 +77,48 @@ type Deposit @entity {
   investor: Bytes!
   assetDeposited: Bytes!
   valueDeposited: BigInt!
-  fundTokensReceived: BigDecimal!
-  totalInvestorFundTokens: BigDecimal!
+  fundTokensReceived: BigInt!
+  totalInvestorFundTokens: BigInt!
   fundValue: BigInt!
-  totalSupply: BigDecimal!
+  totalSupply: BigInt!
   time: BigInt!
-  block: Int!
   pool: Pool!
 }
 
 type ManagerFeeMinted @entity {
   id: ID!
-  pool: Bytes! # address
-  manager: Bytes! # address
-  available: BigInt! # uint256
-  daoFee: BigInt! # uint256
-  managerFee: BigInt! # uint256
-  tokenPriceAtLastFeeMint: BigInt! # uint256
+  pool: Bytes!
+  manager: Bytes!
+  available: BigInt!
+  daoFee: BigInt!
+  managerFee: BigInt!
+  tokenPriceAtLastFeeMint: BigInt!
 }
 
 type PoolManagerLogicSet @entity {
   id: ID!
-  poolManagerLogic: Bytes! # address
-  from: Bytes! # address
+  poolManagerLogic: Bytes!
+  from: Bytes!
 }
 
 type PoolPrivacyUpdated @entity {
   id: ID!
-  isPoolPrivate: Boolean! # bool
+  isPoolPrivate: Boolean!
 }
 
 type TransactionExecuted @entity {
   id: ID!
-  pool: Bytes! # address
-  manager: Bytes! # address
-  transactionType: Int! # uint8
-  time: BigInt! # uint256
+  pool: Bytes!
+  manager: Bytes!
+  transactionType: Int!
+  time: BigInt!
 }
 
 type Transfer @entity {
   id: ID!
-  from: Bytes! # address
-  to: Bytes! # address
-  value: BigInt! # uint256
+  from: Bytes!
+  to: Bytes!
+  value: BigInt!
 }
 
 type Withdrawal @entity {
@@ -134,24 +133,34 @@ type Withdrawal @entity {
   time: BigInt!
   block: Int!
   pool: Pool!
+  assetsWithdrawn: [AssetsWithdrawn!]! @derivedFrom(field: "withdrawal")
+}
+
+type AssetsWithdrawn @entity {
+  id: ID!
+  asset: Bytes!
+  name: String!
+  amount: BigDecimal!
+  withdrawProcessed: Boolean!
+  withdrawal: Withdrawal!
 }
 
 type Exchange @entity {
   id: ID!
-  fundAddress: Bytes! # address
-  sourceAsset: Bytes! # address
-  sourceAmount: BigInt! # uint256
-  dstAsset: Bytes! # address
-  time: BigInt! # uint256
+  fundAddress: Bytes!
+  sourceAsset: Bytes!
+  sourceAmount: BigInt!
+  dstAsset: Bytes!
+  time: BigInt!
   pool: Pool!
 }
 
 type Pool @entity {
   id: ID!
-  fundAddress: Bytes! # address
-  name: String! # string
-  manager: Bytes! # uint256
-  managerName: String! # string`
+  fundAddress: Bytes!
+  name: String!
+  manager: Bytes # optional
+  managerName: String!
   totalSupply: BigDecimal!
   deposits: [Deposit!]! @derivedFrom(field: "pool")
   withdrawals: [Withdrawal!]! @derivedFrom(field: "pool")
@@ -162,8 +171,8 @@ type Pool @entity {
 type Asset @entity {
   id: ID!
   pool: Pool!
-  timestamp: Int! # saved for fast historical lookups
-  block: Int! # saved for fast historical lookups
+  time: Int!
+  block: Int!
   name: String!
   balance: BigDecimal!
   decimals: BigInt!

@@ -417,29 +417,6 @@ export class PoolFactory extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  deployedFundsLength(): BigInt {
-    let result = super.call(
-      "deployedFundsLength",
-      "deployedFundsLength():(uint256)",
-      []
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_deployedFundsLength(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "deployedFundsLength",
-      "deployedFundsLength():(uint256)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
   getAssetHandler(): Address {
     let result = super.call(
       "getAssetHandler",
@@ -486,6 +463,27 @@ export class PoolFactory extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  getAssetType(asset: Address): i32 {
+    let result = super.call("getAssetType", "getAssetType(address):(uint8)", [
+      ethereum.Value.fromAddress(asset)
+    ]);
+
+    return result[0].toI32();
+  }
+
+  try_getAssetType(asset: Address): ethereum.CallResult<i32> {
+    let result = super.tryCall(
+      "getAssetType",
+      "getAssetType(address):(uint8)",
+      [ethereum.Value.fromAddress(asset)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
+  }
+
   getDaoAddress(): Address {
     let result = super.call("getDaoAddress", "getDaoAddress():(address)", []);
 
@@ -527,6 +525,29 @@ export class PoolFactory extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(
       new PoolFactory__getDaoFeeResult(value[0].toBigInt(), value[1].toBigInt())
     );
+  }
+
+  getDeployedFunds(): Array<Address> {
+    let result = super.call(
+      "getDeployedFunds",
+      "getDeployedFunds():(address[])",
+      []
+    );
+
+    return result[0].toAddressArray();
+  }
+
+  try_getDeployedFunds(): ethereum.CallResult<Array<Address>> {
+    let result = super.tryCall(
+      "getDeployedFunds",
+      "getDeployedFunds():(address[])",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddressArray());
   }
 
   getExitCooldown(): BigInt {

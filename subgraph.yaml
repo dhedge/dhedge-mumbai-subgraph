@@ -6,7 +6,7 @@ dataSources:
     name: PoolFactory
     network: mumbai
     source:
-      address: '0x85B287209B36e1BAb292a01dd7AAfb9059df1Cf6'
+      address: '0xeec15f2716c7a98fFe14F7aD0dEeC93962aF4437'
       abi: PoolFactory
       startBlock: 14370216
     mapping:
@@ -60,7 +60,7 @@ dataSources:
     name: UniswapV2RouterGuard
     network: mumbai
     source:
-      address: '0xc396Eb2318310553F6cf5Ae6FD644d82e9ff8be8'
+      address: '0xF1f310360736133A57c193263A1500EA5B77a697'
       abi: UniswapV2RouterGuard
       startBlock: 14370226
     mapping:
@@ -114,7 +114,7 @@ templates:
       eventHandlers:
         - event: Approval(indexed address,indexed address,uint256)
           handler: handleApproval
-        - event: Deposit(address,address,address,uint256,uint256,uint256,uint256,uint256,uint256)
+        - event: Deposit(address,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256)
           handler: handleDeposit
         - event: ManagerFeeMinted(address,address,uint256,uint256,uint256,uint256)
           handler: handleManagerFeeMinted
@@ -126,6 +126,6 @@ templates:
           handler: handleTransactionExecuted
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
-        - event: Withdrawal(address,address,uint256,uint256,uint256,uint256,uint256,uint256)
+        - event: Withdrawal(address,address,uint256,uint256,uint256,uint256,uint256,(address,uint256,bool)[],uint256)
           handler: handleWithdrawal
       file: ./src/pool-logic.ts
