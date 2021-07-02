@@ -20,7 +20,8 @@ export function handleExchange(event: ExchangeEvent): void {
   );
   // PoolLogic
   let pool = Pool.load(event.params.fundAddress.toHexString());
-  let poolTokenDecimals = fetchTokenDecimals(event.address);
+  let poolContract = PoolLogic.bind(event.params.fundAddress);
+  let poolTokenDecimals = fetchTokenDecimals(event.params.fundAddress);
 
   if (!pool) {
     pool = new Pool(event.params.fundAddress.toHexString());
@@ -28,10 +29,8 @@ export function handleExchange(event: ExchangeEvent): void {
   }
 
   // Manager Logic
-  let poolContract = PoolLogic.bind(event.params.fundAddress);
   let managerAddress = poolContract.poolManagerLogic();
   let managerContract = PoolManagerLogic.bind(managerAddress);
-
 
   let trySourceAssetBalance = managerContract.try_assetBalance(event.params.sourceAsset);
   if (trySourceAssetBalance.reverted) {
@@ -94,7 +93,9 @@ export function handleExchange(event: ExchangeEvent): void {
   pool.name = poolName;
   pool.manager = managerContract.manager();
   pool.managerName = poolContract.managerName();
-  pool.totalSupply = convertTokenToDecimal(poolContract.totalSupply(), poolTokenDecimals);
+
+  let poolSupply = convertTokenToDecimal(poolContract.totalSupply(), poolTokenDecimals);
+  pool.totalSupply = poolSupply;
   pool.save();
 
   // Exchange Entity

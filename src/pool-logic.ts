@@ -106,7 +106,10 @@ export function handleDeposit(event: DepositEvent): void {
   pool.manager = managerAddress
   pool.manager = managerContract.manager();
   pool.managerName = poolContract.managerName();
-  pool.totalSupply = convertTokenToDecimal(poolContract.totalSupply(), poolTokenDecimals);
+
+  // use PoolLogic.bind(event.address) for all?
+  let poolSupply = convertTokenToDecimal(poolContract.totalSupply(), poolTokenDecimals);
+  pool.totalSupply = poolSupply;
   pool.save();
 
   // Deposit Entity
